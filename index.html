@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الجماوية | Gemaweya</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;
+  --bg-panel:#141414;
+  --bg-panel-2:#1b1b1b;
+  --line:#2a2a2a;
+  --ember:#ff5a1f;
+  --ember-dim:#7a2c10;
+  --steel:#5b7d8c;
+  --steel-dim:#2a3a41;
+  --text:#f2efe9;
+  --text-muted:#8a8580;
+  --ok:#6ebf8b;
+  --warn:#e0b23d;
+  --radius:14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; min-height:100vh; overflow-x:hidden;}
+body[dir="rtl"] .num{direction:ltr; unicode-bidi:isolate;}
+.wrap{max-width:920px; margin:0 auto; padding:0 20px 80px;}
+
+/* Nav */
+nav{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; max-width:920px; margin:0 auto; border-bottom:1px solid var(--line);}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand-mark{width:34px; height:34px; border-radius:8px; background:linear-gradient(155deg, var(--ember), var(--ember-dim)); display:flex; align-items:center; justify-content:center; font-family:'Oswald',sans-serif; font-weight:700; font-size:16px; color:#0a0a0a;}
+.brand-name{font-family:'Oswald',sans-serif; font-weight:600; font-size:17px; letter-spacing:.5px;}
+.brand-name span{color:var(--ember);}
+#langToggle{background:var(--bg-panel); border:1px solid var(--line); color:var(--text); padding:8px 14px; border-radius:20px; font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:1px; cursor:pointer; transition:.2s;}
+#langToggle:hover{border-color:var(--ember);}
+
+/* Hero / Gauge */
+.hero{padding:44px 0 20px; text-align:center;}
+.eyebrow{font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;}
+.gauge-wrap{position:relative; width:260px; height:260px; margin:24px auto;}
+.gauge-ring{width:260px; height:260px; border-radius:50%; background:conic-gradient(var(--ember) calc(var(--pct,0)*1%), var(--bg-panel-2) 0); display:flex; align-items:center; justify-content:center; transition:background 1s ease; box-shadow:0 0 0 1px var(--line), inset 0 0 30px rgba(0,0,0,.5);}
+.gauge-ring.hot{filter:drop-shadow(0 0 18px rgba(255,90,31,.45));}
+.gauge-inner{width:212px; height:212px; border-radius:50%; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--line);}
+.gauge-num{font-family:'Oswald',sans-serif; font-weight:700; font-size:44px; line-height:1;}
+.gauge-label{font-size:12px; color:var(--text-muted); margin-top:6px;}
+.gauge-target{font-size:11px; color:var(--text-muted); margin-top:2px;}
+
+/* Macro bars */
+.macros{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:26px;}
+.macro-card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px;}
+.macro-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+.macro-name{font-size:12px; color:var(--text-muted); letter-spacing:.5px;}
+.macro-val{font-family:'Oswald',sans-serif; font-size:15px;}
+.bar-track{height:6px; background:var(--bg-panel-2); border-radius:3px; overflow:hidden;}
+.bar-fill{height:100%; border-radius:3px; transition:width .6s ease;}
+.bar-fill.protein{background:var(--steel);}
+.bar-fill.carbs{background:var(--warn);}
+.bar-fill.fat{background:#c97fd4;}
+
+section{margin-top:40px;}
+.section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;}
+.section-title{font-family:'Oswald',sans-serif; font-size:19px; font-weight:600; letter-spacing:.3px;}
+.section-sub{font-size:12px; color:var(--text-muted);}
+.card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+
+/* Calculator */
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:12px; color:var(--text-muted);}
+.field input, .field select{background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:11px 12px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px;}
+.field input:focus, .field select:focus{outline:none; border-color:var(--ember);}
+.seg{display:flex; gap:8px; margin-top:4px;}
+.seg button{flex:1; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text-muted); padding:9px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:13px; cursor:pointer; transition:.2s;}
+.seg button.active{border-color:var(--ember); color:var(--text); background:rgba(255,90,31,.1);}
+.btn-primary{width:100%; margin-top:16px; background:var(--ember); color:#0a0a0a; border:none; padding:13px; border-radius:8px; font-family:'Oswald',sans-serif; font-weight:600; font-size:14px; letter-spacing:.5px; cursor:pointer; transition:.2s;}
+.btn-primary:hover{background:#ff6f3d;}
+
+/* Food search */
+.search-row{display:flex; gap:8px; margin-bottom:12px;}
+.search-row input{flex:1; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:11px 14px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px;}
+.search-row input:focus{outline:none; border-color:var(--ember);}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+.chip{background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text-muted); padding:6px 13px; border-radius:16px; font-size:12px; cursor:pointer; transition:.2s; white-space:nowrap;}
+.chip.active{border-color:var(--steel); color:var(--text); background:rgba(91,125,140,.15);}
+.food-results{max-height:220px; overflow-y:auto; border:1px solid var(--line); border-radius:10px; margin-bottom:14px;}
+.food-row{display:flex; justify-content:space-between; align-items:center; padding:11px 14px; border-bottom:1px solid var(--line); cursor:pointer; transition:.15s;}
+.food-row:last-child{border-bottom:none;}
+.food-row:hover, .food-row.selected{background:var(--bg-panel-2);}
+.food-row.selected{border-inline-start:3px solid var(--ember);}
+.food-row-name{font-size:13.5px;}
+.food-row-cal{font-size:11.5px; color:var(--text-muted);}
+.food-results-empty{padding:20px; text-align:center; color:var(--text-muted); font-size:13px;}
+.add-row{display:flex; gap:10px; align-items:center;}
+.add-row .selected-name{flex:1; font-size:13px; color:var(--text-muted);}
+.add-row .selected-name b{color:var(--text);}
+.add-row input{width:100px; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:11px 12px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px;}
+.add-row button{background:var(--steel); color:#0a0a0a; border:none; border-radius:8px; padding:0 20px; height:44px; font-family:'Oswald',sans-serif; font-weight:600; cursor:pointer; font-size:13px;}
+.add-row button:disabled{opacity:.4; cursor:not-allowed;}
+
+.log-empty{text-align:center; color:var(--text-muted); font-size:13px; padding:30px 0;}
+.log-item{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line);}
+.log-item:last-child{border-bottom:none;}
+.log-name{font-size:14px;}
+.log-grams{font-size:12px; color:var(--text-muted);}
+.log-cals{font-family:'Oswald',sans-serif; font-size:14px; color:var(--ember);}
+.log-del{background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:0 4px;}
+
+/* Install banner */
+.install-banner{
+  position:fixed; left:16px; right:16px; bottom:16px; z-index:50;
+  background:var(--bg-panel); border:1px solid var(--ember); border-radius:var(--radius);
+  padding:14px 16px; display:flex; align-items:center; gap:12px; max-width:600px; margin:0 auto;
+  box-shadow:0 8px 30px rgba(0,0,0,.5); transform:translateY(140%); transition:transform .4s ease;
+}
+.install-banner.show{transform:translateY(0);}
+.install-icon{width:38px; height:38px; border-radius:9px; background:var(--ember); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px;}
+.install-text{flex:1;}
+.install-title{font-size:13px; font-weight:700;}
+.install-sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+.install-btn{background:var(--ember); color:#0a0a0a; border:none; padding:9px 16px; border-radius:8px; font-family:'Oswald',sans-serif; font-weight:600; font-size:12.5px; cursor:pointer; white-space:nowrap;}
+.install-close{background:none; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; padding:2px 4px;}
+
+/* Weight tracker */
+.weight-row{display:flex; gap:10px; margin-bottom:18px;}
+.weight-row input{flex:1; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:11px 12px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px;}
+.weight-row button{background:var(--ember); color:#0a0a0a; border:none; border-radius:8px; padding:0 18px; font-family:'Oswald',sans-serif; font-weight:600; cursor:pointer; font-size:13px;}
+.chart-wrap{width:100%; overflow-x:auto;}
+.chart-empty{text-align:center; color:var(--text-muted); font-size:13px; padding:24px 0;}
+.chart-meta{display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:6px;}
+
+/* Custom food */
+.toggle-link{background:none; border:none; color:var(--steel); font-size:13px; cursor:pointer; padding:8px 0; text-decoration:underline; text-underline-offset:3px;}
+.custom-form{display:none; margin-top:12px; padding-top:14px; border-top:1px solid var(--line);}
+.custom-form.open{display:block;}
+.custom-form .form-grid{grid-template-columns:1fr 1fr;}
+.custom-form .field{margin-bottom:10px;}
+
+/* History */
+.history-day{border:1px solid var(--line); border-radius:10px; margin-bottom:10px; overflow:hidden;}
+.history-head{display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; background:var(--bg-panel-2);}
+.history-date{font-size:13px; font-weight:700;}
+.history-summary{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+.history-cal{font-family:'Oswald',sans-serif; color:var(--ember); font-size:14px;}
+.history-items{display:none; padding:6px 16px 12px;}
+.history-items.open{display:block;}
+.history-item-row{display:flex; justify-content:space-between; font-size:12.5px; padding:6px 0; border-bottom:1px solid var(--line); color:var(--text-muted);}
+.history-item-row:last-child{border-bottom:none;}
+
+.credit{text-align:center; padding:6px 0 20px; font-size:11px; color:var(--text-muted);}
+.credit a{color:var(--steel); text-decoration:none;}
+.credit a:hover{text-decoration:underline;}
+
+footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-size:11px;}
+
+@media(max-width:520px){
+  .form-grid{grid-template-columns:1fr;}
+  .macros{grid-template-columns:1fr;}
+  .gauge-wrap{width:220px; height:220px;}
+  .gauge-ring{width:220px; height:220px;}
+  .gauge-inner{width:176px; height:176px;}
+  .add-row{flex-wrap:wrap;}
+  .add-row .selected-name{width:100%;}
+}
+</style>
+</head>
+<body dir="rtl">
+
+<nav>
+  <div class="brand">
+    <div class="brand-mark">ج</div>
+    <div class="brand-name" data-t="brandName">منصة <span>الجماوية</span></div>
+  </div>
+  <button id="langToggle">EN</button>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow" data-t="eyebrow">التتبع اليومي</div>
+    <div class="gauge-wrap">
+      <div class="gauge-ring" id="gaugeRing">
+        <div class="gauge-inner">
+          <div class="gauge-num num" id="gaugeNum">0</div>
+          <div class="gauge-label" data-t="gaugeLabel">سعرة متبقية</div>
+          <div class="gauge-target num" id="gaugeTarget">الهدف: —</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="macros">
+      <div class="macro-card">
+        <div class="macro-top"><span class="macro-name" data-t="protein">بروتين</span><span class="macro-val num" id="proteinVal">0/0غ</span></div>
+        <div class="bar-track"><div class="bar-fill protein" id="proteinBar" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-top"><span class="macro-name" data-t="carbs">كارب</span><span class="macro-val num" id="carbsVal">0/0غ</span></div>
+        <div class="bar-track"><div class="bar-fill carbs" id="carbsBar" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-top"><span class="macro-name" data-t="fat">دهون</span><span class="macro-val num" id="fatVal">0/0غ</span></div>
+        <div class="bar-track"><div class="bar-fill fat" id="fatBar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <section>
+    <div class="section-head">
+      <div class="section-title" data-t="calcTitle">احسب احتياجك</div>
+      <div class="section-sub" data-t="calcSub">مرة واحدة تكفي</div>
+    </div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="field"><label data-t="fWeight">الوزن (كجم)</label><input type="number" id="inWeight" placeholder="75"></div>
+        <div class="field"><label data-t="fHeight">الطول (سم)</label><input type="number" id="inHeight" placeholder="175"></div>
+        <div class="field"><label data-t="fAge">السن</label><input type="number" id="inAge" placeholder="24"></div>
+        <div class="field">
+          <label data-t="fGender">النوع</label>
+          <select id="inGender">
+            <option value="male" data-t="male">ذكر</option>
+            <option value="female" data-t="female">أنثى</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label data-t="fActivity">مستوى النشاط</label>
+        <select id="inActivity">
+          <option value="1.2" data-t="act1">قليل الحركة (شغل مكتبي)</option>
+          <option value="1.375" data-t="act2">نشاط خفيف (1-3 أيام تمرين)</option>
+          <option value="1.55" selected data-t="act3">نشاط متوسط (3-5 أيام تمرين)</option>
+          <option value="1.725" data-t="act4">نشاط عالي (6-7 أيام تمرين)</option>
+          <option value="1.9" data-t="act5">رياضي / شغل بدني</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label data-t="fGoal">الهدف</label>
+        <div class="seg" id="goalSeg">
+          <button data-goal="cut" data-t="goalCut">تنشيف</button>
+          <button data-goal="maintain" class="active" data-t="goalMaintain">ثبات</button>
+          <button data-goal="bulk" data-t="goalBulk">تضخيم</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="calcBtn" data-t="calcBtn">احسب واحفظ الهدف</button>
+    </div>
+  </section>
+
+  <!-- MEAL LOG -->
+  <section>
+    <div class="section-head">
+      <div class="section-title" data-t="logTitle">سجل الوجبات</div>
+      <div class="section-sub" id="logDate"></div>
+    </div>
+    <div class="card">
+      <div class="search-row">
+        <input type="text" id="foodSearch" data-t-ph="searchPh" placeholder="دور على أكلة...">
+      </div>
+      <div class="chips" id="catChips"></div>
+      <div class="food-results" id="foodResults"></div>
+      <button class="toggle-link" id="customToggle" data-t="addCustomLink">+ ضيف أكلة مش موجودة</button>
+      <div class="custom-form" id="customForm">
+        <div class="form-grid">
+          <div class="field"><label data-t="cName">اسم الأكلة</label><input type="text" id="cfName"></div>
+          <div class="field">
+            <label data-t="cCat">التصنيف</label>
+            <select id="cfCat"></select>
+          </div>
+          <div class="field"><label data-t="cCal">سعرات / 100غ</label><input type="number" id="cfCal"></div>
+          <div class="field"><label data-t="cProtein">بروتين / 100غ</label><input type="number" id="cfP"></div>
+          <div class="field"><label data-t="cCarbs">كارب / 100غ</label><input type="number" id="cfC"></div>
+          <div class="field"><label data-t="cFat">دهون / 100غ</label><input type="number" id="cfF"></div>
+        </div>
+        <button class="btn-primary" id="saveCustomBtn" data-t="cSave">حفظ الأكلة</button>
+      </div>
+      <div class="add-row" style="margin-top:14px;">
+        <div class="selected-name" id="selectedName" data-t="noSelection">اختار أكلة من الليستة</div>
+        <input type="number" id="gramsInput" placeholder="جرام" data-t-ph="gramsPh">
+        <button id="addFoodBtn" data-t="addBtn" disabled>إضافة</button>
+      </div>
+      <div id="logList" style="margin-top:16px;">
+        <div class="log-empty" data-t="logEmpty">لسه مفيش وجبات مسجلة النهاردة</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEIGHT TRACKER -->
+  <section>
+    <div class="section-head">
+      <div class="section-title" data-t="weightTitle">تتبع الوزن</div>
+      <div class="section-sub" data-t="weightSub">سجل وزنك أسبوعيًا</div>
+    </div>
+    <div class="card">
+      <div class="weight-row">
+        <input type="number" id="weightInput" data-t-ph="weightPh" placeholder="الوزن النهاردة (كجم)">
+        <button id="saveWeightBtn" data-t="saveBtn">حفظ</button>
+      </div>
+      <div class="chart-wrap">
+        <svg id="weightChart" width="100%" height="140" viewBox="0 0 600 140" preserveAspectRatio="none"></svg>
+      </div>
+      <div id="weightEmpty" class="chart-empty" data-t="weightEmpty">لسه مفيش وزن مسجل</div>
+      <div class="chart-meta" id="weightMeta" style="display:none;"></div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section>
+    <div class="section-head">
+      <div class="section-title" data-t="historyTitle">السجل التاريخي</div>
+      <div class="section-sub" data-t="historySub">آخر 14 يوم</div>
+    </div>
+    <div class="card" id="historyCard">
+      <div class="chart-empty" data-t="historyEmpty">لسه مفيش أيام مسجلة</div>
+    </div>
+  </section>
+
+  <footer data-t="footer">الجماوية — بدون سيرفر، بياناتك محفوظة على جهازك بس</footer>
+  <div class="credit" data-t="credit">تم تصميم بواسطة <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener">NexCode</a></div>
+</div>
+
+<div class="install-banner" id="installBanner">
+  <div class="install-icon">⬇</div>
+  <div class="install-text">
+    <div class="install-title" data-t="installTitle">ثبت المنصة على شاشتك الرئيسية</div>
+    <div class="install-sub" data-t="installSub">وصول أسرع، وتشتغل حتى لو النت واقع</div>
+  </div>
+  <button class="install-btn" id="installBtn" data-t="installBtnText">تثبيت</button>
+  <button class="install-close" id="installCloseBtn">✕</button>
+</div>
+
+<script>
+/* ---------------- Translations ---------------- */
+const T = {
+  ar:{
+    brandName:'منصة <span>الجماوية</span>',
+    eyebrow:'التتبع اليومي', gaugeLabel:'سعرة متبقية',
+    protein:'بروتين', carbs:'كارب', fat:'دهون',
+    calcTitle:'احسب احتياجك', calcSub:'مرة واحدة تكفي',
+    fWeight:'الوزن (كجم)', fHeight:'الطول (سم)', fAge:'السن', fGender:'النوع',
+    male:'ذكر', female:'أنثى', fActivity:'مستوى النشاط',
+    act1:'قليل الحركة (شغل مكتبي)', act2:'نشاط خفيف (1-3 أيام تمرين)',
+    act3:'نشاط متوسط (3-5 أيام تمرين)', act4:'نشاط عالي (6-7 أيام تمرين)', act5:'رياضي / شغل بدني',
+    fGoal:'الهدف', goalCut:'تنشيف', goalMaintain:'ثبات', goalBulk:'تضخيم',
+    calcBtn:'احسب واحفظ الهدف',
+    logTitle:'سجل الوجبات', searchPh:'دور على أكلة...', gramsPh:'جرام', addBtn:'إضافة',
+    noSelection:'اختار أكلة من الليستة',
+    logEmpty:'لسه مفيش وجبات مسجلة النهاردة',
+    footer:'الجماوية — بدون سيرفر، بياناتك محفوظة على جهازك بس',
+    targetPrefix:'الهدف: ', remainLabel:'سعرة متبقية', overLabel:'سعرة زيادة',
+    setGoalFirst:'احسب هدفك اليومي الأول من قسم "احسب احتياجك"',
+    noResults:'مفيش نتايج',
+    catAll:'الكل', catProtein:'بروتين', catCarbs:'نشويات', catDairy:'ألبان', catFruit:'فاكهة',
+    catVeg:'خضار', catNuts:'مكسرات ودهون', catFastfood:'أكل جاهز', catSweets:'حلويات', catDrinks:'مشروبات',
+    addCustomLink:'+ ضيف أكلة مش موجودة', cName:'اسم الأكلة', cCat:'التصنيف',
+    cCal:'سعرات / 100غ', cProtein:'بروتين / 100غ', cCarbs:'كارب / 100غ', cFat:'دهون / 100غ', cSave:'حفظ الأكلة',
+    customFillAll:'دخل الاسم والسعرات على الأقل',
+    weightTitle:'تتبع الوزن', weightSub:'سجل وزنك أسبوعيًا', weightPh:'الوزن النهاردة (كجم)',
+    saveBtn:'حفظ', weightEmpty:'لسه مفيش وزن مسجل', weightFirst:'أول وزن', weightLast:'آخر وزن',
+    historyTitle:'السجل التاريخي', historySub:'آخر 14 يوم', historyEmpty:'لسه مفيش أيام مسجلة',
+    historyItemsCount:(n)=>`${n} صنف`, todayLabel:'النهاردة',
+    installTitle:'ثبت المنصة على شاشتك الرئيسية', installSub:'وصول أسرع، وتشتغل حتى لو النت واقع',
+    installBtnText:'تثبيت', installIosHint:'من قائمة المشاركة اختار "إضافة إلى الشاشة الرئيسية"',
+    credit:'تم تصميم بواسطة'
+  },
+  en:{
+    brandName:'<span>Gemaweya</span> Platform',
+    eyebrow:'Daily tracking', gaugeLabel:'calories left',
+    protein:'Protein', carbs:'Carbs', fat:'Fat',
+    calcTitle:'Calculate your needs', calcSub:'One time setup',
+    fWeight:'Weight (kg)', fHeight:'Height (cm)', fAge:'Age', fGender:'Gender',
+    male:'Male', female:'Female', fActivity:'Activity level',
+    act1:'Sedentary (desk job)', act2:'Light (1-3 training days)',
+    act3:'Moderate (3-5 training days)', act4:'High (6-7 training days)', act5:'Athlete / physical job',
+    fGoal:'Goal', goalCut:'Cut', goalMaintain:'Maintain', goalBulk:'Bulk',
+    calcBtn:'Calculate & save target',
+    logTitle:'Meal log', searchPh:'Search a food...', gramsPh:'grams', addBtn:'Add',
+    noSelection:'Pick a food from the list',
+    logEmpty:'No meals logged today yet',
+    footer:'Gemaweya — no server, your data stays on your device only',
+    targetPrefix:'Target: ', remainLabel:'cal left', overLabel:'cal over',
+    setGoalFirst:'Calculate your daily target first in the "Calculate your needs" section',
+    noResults:'No results',
+    catAll:'All', catProtein:'Protein', catCarbs:'Carbs', catDairy:'Dairy', catFruit:'Fruit',
+    catVeg:'Vegetables', catNuts:'Nuts & fats', catFastfood:'Fast food', catSweets:'Sweets', catDrinks:'Drinks',
+    addCustomLink:'+ Add a food not listed', cName:'Food name', cCat:'Category',
+    cCal:'Calories / 100g', cProtein:'Protein / 100g', cCarbs:'Carbs / 100g', cFat:'Fat / 100g', cSave:'Save food',
+    customFillAll:'Enter at least the name and calories',
+    weightTitle:'Weight tracking', weightSub:'Log your weight weekly', weightPh:"Today's weight (kg)",
+    saveBtn:'Save', weightEmpty:'No weight logged yet', weightFirst:'First', weightLast:'Latest',
+    historyTitle:'History', historySub:'Last 14 days', historyEmpty:'No days logged yet',
+    historyItemsCount:(n)=>`${n} items`, todayLabel:'Today',
+    installTitle:'Install the app on your home screen', installSub:'Faster access, works even offline',
+    installBtnText:'Install', installIosHint:'From the share menu, choose "Add to Home Screen"',
+    credit:'Designed by'
+  }
+};
+let lang = 'ar';
+
+/* ---------------- Food database (values per 100g) ---------------- */
+const FOODS = [
+  // Protein
+  {ar:'صدر فرخ مشوي', en:'Grilled chicken breast', cal:165, p:31, c:0, f:3.6, cat:'protein'},
+  {ar:'فراخ بجلد مشوية', en:'Roasted chicken (with skin)', cal:239, p:27, c:0, f:14, cat:'protein'},
+  {ar:'لحمة بقري قليلة الدهن', en:'Lean beef', cal:187, p:26, c:0, f:9, cat:'protein'},
+  {ar:'لحمة ضاني', en:'Lamb', cal:294, p:25, c:0, f:21, cat:'protein'},
+  {ar:'كبدة بقري', en:'Beef liver', cal:175, p:26, c:3.9, f:4.9, cat:'protein'},
+  {ar:'سمك بلطي مشوي', en:'Grilled tilapia', cal:128, p:26, c:0, f:2.7, cat:'protein'},
+  {ar:'سمك سالمون', en:'Salmon', cal:208, p:20, c:0, f:13, cat:'protein'},
+  {ar:'جمبري', en:'Shrimp', cal:99, p:24, c:0.2, f:0.3, cat:'protein'},
+  {ar:'تونة في ماء', en:'Tuna (in water)', cal:116, p:26, c:0, f:0.8, cat:'protein'},
+  {ar:'تونة في زيت', en:'Tuna (in oil)', cal:198, p:25, c:0, f:10, cat:'protein'},
+  {ar:'بيضة مسلوقة', en:'Boiled egg', cal:155, p:13, c:1.1, f:11, cat:'protein'},
+  {ar:'بياض بيض', en:'Egg white', cal:52, p:11, c:0.7, f:0.2, cat:'protein'},
+  {ar:'واي بروتين', en:'Whey protein', cal:370, p:80, c:8, f:5, cat:'protein'},
+  {ar:'صدور ديك رومي', en:'Turkey breast', cal:135, p:30, c:0, f:1, cat:'protein'},
+  {ar:'سجق بقري', en:'Beef sausage', cal:296, p:13, c:2, f:26, cat:'protein'},
+  {ar:'لانشون', en:'Luncheon meat', cal:240, p:13, c:6, f:18, cat:'protein'},
+  {ar:'بسطرمة', en:'Basterma', cal:250, p:28, c:2, f:14, cat:'protein'},
+  // Carbs / grains
+  {ar:'أرز أبيض مسلوق', en:'White rice (cooked)', cal:130, p:2.7, c:28, f:0.3, cat:'carbs'},
+  {ar:'أرز بني مسلوق', en:'Brown rice (cooked)', cal:123, p:2.6, c:26, f:1, cat:'carbs'},
+  {ar:'عيش بلدي', en:'Baladi bread', cal:265, p:9, c:52, f:1.9, cat:'carbs'},
+  {ar:'عيش أبيض', en:'White bread', cal:265, p:9, c:49, f:3.2, cat:'carbs'},
+  {ar:'عيش فينو', en:'Fino bread', cal:280, p:8, c:54, f:3, cat:'carbs'},
+  {ar:'مكرونة مسلوقة', en:'Pasta (cooked)', cal:131, p:5, c:25, f:1.1, cat:'carbs'},
+  {ar:'شوفان', en:'Oats', cal:389, p:16.9, c:66, f:6.9, cat:'carbs'},
+  {ar:'كينوا مسلوقة', en:'Quinoa (cooked)', cal:120, p:4.4, c:21, f:1.9, cat:'carbs'},
+  {ar:'بطاطس مسلوقة', en:'Boiled potato', cal:87, p:1.9, c:20, f:0.1, cat:'carbs'},
+  {ar:'بطاطا حلوة', en:'Sweet potato', cal:86, p:1.6, c:20, f:0.1, cat:'carbs'},
+  {ar:'ذرة مسلوقة', en:'Corn (boiled)', cal:96, p:3.4, c:21, f:1.5, cat:'carbs'},
+  {ar:'عدس مسلوق', en:'Lentils (cooked)', cal:116, p:9, c:20, f:0.4, cat:'carbs'},
+  {ar:'فول مدمس', en:'Fava beans (foul)', cal:110, p:7.6, c:19, f:0.7, cat:'carbs'},
+  {ar:'حمص مسلوق', en:'Chickpeas (cooked)', cal:164, p:8.9, c:27, f:2.6, cat:'carbs'},
+  {ar:'لوبيا مسلوقة', en:'Black-eyed peas (cooked)', cal:116, p:8, c:21, f:0.6, cat:'carbs'},
+  // Dairy
+  {ar:'لبن كامل الدسم', en:'Whole milk', cal:61, p:3.2, c:4.8, f:3.3, cat:'dairy'},
+  {ar:'لبن خالي الدسم', en:'Skim milk', cal:34, p:3.4, c:5, f:0.1, cat:'dairy'},
+  {ar:'زبادي يوناني', en:'Greek yogurt', cal:59, p:10, c:3.6, f:0.4, cat:'dairy'},
+  {ar:'زبادي عادي', en:'Regular yogurt', cal:61, p:3.5, c:4.7, f:3.3, cat:'dairy'},
+  {ar:'جبنة قريش', en:'Cottage cheese', cal:98, p:11, c:3.4, f:4.3, cat:'dairy'},
+  {ar:'جبنة بيضاء', en:'White cheese', cal:264, p:18, c:1, f:21, cat:'dairy'},
+  {ar:'جبنة رومي', en:'Roumy cheese', cal:380, p:25, c:1.5, f:30, cat:'dairy'},
+  {ar:'جبنة موتزاريلا', en:'Mozzarella', cal:280, p:22, c:2, f:17, cat:'dairy'},
+  {ar:'قشطة', en:'Cream', cal:292, p:2.8, c:3, f:30, cat:'dairy'},
+  {ar:'زبدة', en:'Butter', cal:717, p:0.9, c:0.1, f:81, cat:'dairy'},
+  // Fruit
+  {ar:'موز', en:'Banana', cal:89, p:1.1, c:23, f:0.3, cat:'fruit'},
+  {ar:'تفاح', en:'Apple', cal:52, p:0.3, c:14, f:0.2, cat:'fruit'},
+  {ar:'برتقال', en:'Orange', cal:47, p:0.9, c:12, f:0.1, cat:'fruit'},
+  {ar:'مانجو', en:'Mango', cal:60, p:0.8, c:15, f:0.4, cat:'fruit'},
+  {ar:'عنب', en:'Grapes', cal:69, p:0.7, c:18, f:0.2, cat:'fruit'},
+  {ar:'بطيخ', en:'Watermelon', cal:30, p:0.6, c:8, f:0.2, cat:'fruit'},
+  {ar:'شمام', en:'Cantaloupe', cal:34, p:0.8, c:8, f:0.2, cat:'fruit'},
+  {ar:'فراولة', en:'Strawberry', cal:32, p:0.7, c:8, f:0.3, cat:'fruit'},
+  {ar:'جوافة', en:'Guava', cal:68, p:2.6, c:14, f:1, cat:'fruit'},
+  {ar:'كيوي', en:'Kiwi', cal:61, p:1.1, c:15, f:0.5, cat:'fruit'},
+  {ar:'أناناس', en:'Pineapple', cal:50, p:0.5, c:13, f:0.1, cat:'fruit'},
+  {ar:'خوخ', en:'Peach', cal:39, p:0.9, c:10, f:0.3, cat:'fruit'},
+  {ar:'كمثرى', en:'Pear', cal:57, p:0.4, c:15, f:0.1, cat:'fruit'},
+  {ar:'تمر', en:'Dates', cal:277, p:1.8, c:75, f:0.2, cat:'fruit'},
+  {ar:'مشمش', en:'Apricot', cal:48, p:1.4, c:11, f:0.4, cat:'fruit'},
+  {ar:'رمان', en:'Pomegranate', cal:83, p:1.7, c:19, f:1.2, cat:'fruit'},
+  // Veg
+  {ar:'خيار', en:'Cucumber', cal:15, p:0.7, c:3.6, f:0.1, cat:'veg'},
+  {ar:'طماطم', en:'Tomato', cal:18, p:0.9, c:3.9, f:0.2, cat:'veg'},
+  {ar:'خس', en:'Lettuce', cal:15, p:1.4, c:2.9, f:0.2, cat:'veg'},
+  {ar:'بروكلي', en:'Broccoli', cal:34, p:2.8, c:7, f:0.4, cat:'veg'},
+  {ar:'جزر', en:'Carrot', cal:41, p:0.9, c:10, f:0.2, cat:'veg'},
+  {ar:'فلفل ألوان', en:'Bell pepper', cal:31, p:1, c:6, f:0.3, cat:'veg'},
+  {ar:'بصل', en:'Onion', cal:40, p:1.1, c:9, f:0.1, cat:'veg'},
+  {ar:'كوسة', en:'Zucchini', cal:17, p:1.2, c:3.1, f:0.3, cat:'veg'},
+  {ar:'باذنجان', en:'Eggplant', cal:25, p:1, c:6, f:0.2, cat:'veg'},
+  {ar:'سبانخ', en:'Spinach', cal:23, p:2.9, c:3.6, f:0.4, cat:'veg'},
+  {ar:'ملوخية مطبوخة', en:'Molokhia (cooked)', cal:60, p:3.5, c:9, f:1.5, cat:'veg'},
+  {ar:'فاصوليا خضرا', en:'Green beans', cal:31, p:1.8, c:7, f:0.2, cat:'veg'},
+  // Nuts & fats
+  {ar:'زيت زيتون', en:'Olive oil', cal:884, p:0, c:0, f:100, cat:'nuts'},
+  {ar:'زبدة فول سوداني', en:'Peanut butter', cal:588, p:25, c:20, f:50, cat:'nuts'},
+  {ar:'لوز', en:'Almonds', cal:579, p:21, c:22, f:50, cat:'nuts'},
+  {ar:'جوز', en:'Walnuts', cal:654, p:15, c:14, f:65, cat:'nuts'},
+  {ar:'كاجو', en:'Cashew', cal:553, p:18, c:30, f:44, cat:'nuts'},
+  {ar:'فستق', en:'Pistachio', cal:560, p:20, c:28, f:45, cat:'nuts'},
+  {ar:'أفوكادو', en:'Avocado', cal:160, p:2, c:8.5, f:15, cat:'nuts'},
+  {ar:'بذر الشيا', en:'Chia seeds', cal:486, p:17, c:42, f:31, cat:'nuts'},
+  {ar:'طحينة', en:'Tahini', cal:595, p:17, c:21, f:54, cat:'nuts'},
+  // Fast food / restaurant / Egyptian dishes
+  {ar:'كشري', en:'Koshari', cal:150, p:4, c:28, f:2.6, cat:'fastfood'},
+  {ar:'شاورما فراخ', en:'Chicken shawarma', cal:220, p:18, c:12, f:12, cat:'fastfood'},
+  {ar:'شاورما لحمة', en:'Beef shawarma', cal:250, p:17, c:10, f:16, cat:'fastfood'},
+  {ar:'برجر لحمة', en:'Beef burger sandwich', cal:295, p:17, c:24, f:15, cat:'fastfood'},
+  {ar:'بيتزا مارجريتا', en:'Margherita pizza', cal:266, p:11, c:33, f:10, cat:'fastfood'},
+  {ar:'هوت دوج', en:'Hot dog', cal:290, p:10, c:22, f:17, cat:'fastfood'},
+  {ar:'بطاطس مقلية', en:'French fries', cal:312, p:3.4, c:41, f:15, cat:'fastfood'},
+  {ar:'فراخ بروستد', en:'Fried chicken (breaded)', cal:246, p:17, c:9, f:16, cat:'fastfood'},
+  {ar:'حواوشي', en:'Hawawshi', cal:280, p:15, c:22, f:16, cat:'fastfood'},
+  {ar:'فطير مشلتت', en:'Feteer meshaltet', cal:380, p:8, c:45, f:18, cat:'fastfood'},
+  {ar:'حمام محشي', en:'Stuffed pigeon', cal:260, p:20, c:15, f:14, cat:'fastfood'},
+  {ar:'كبدة اسكندراني', en:'Alexandrian-style liver', cal:200, p:18, c:6, f:12, cat:'fastfood'},
+  {ar:'مسقعة', en:'Moussaka (Egyptian)', cal:130, p:3, c:10, f:9, cat:'fastfood'},
+  {ar:'محشي ورق عنب', en:'Stuffed grape leaves', cal:160, p:3, c:22, f:7, cat:'fastfood'},
+  {ar:'ملوخية باللحمة', en:'Molokhia with meat', cal:110, p:8, c:6, f:6, cat:'fastfood'},
+  // Sweets
+  {ar:'شوكولاتة لبن', en:'Milk chocolate', cal:535, p:7.6, c:59, f:30, cat:'sweets'},
+  {ar:'بسكويت', en:'Biscuits', cal:480, p:6, c:65, f:21, cat:'sweets'},
+  {ar:'كنافة', en:'Kunafa', cal:330, p:5, c:45, f:15, cat:'sweets'},
+  {ar:'بقلاوة', en:'Baklava', cal:430, p:6, c:50, f:25, cat:'sweets'},
+  {ar:'أرز باللبن', en:'Rice pudding', cal:110, p:3, c:18, f:3, cat:'sweets'},
+  {ar:'أم علي', en:"Om Ali", cal:250, p:5, c:28, f:13, cat:'sweets'},
+  {ar:'آيس كريم', en:'Ice cream', cal:207, p:3.5, c:24, f:11, cat:'sweets'},
+  {ar:'عسل نحل', en:'Honey', cal:304, p:0.3, c:82, f:0, cat:'sweets'},
+  {ar:'مربى', en:'Jam', cal:250, p:0.3, c:65, f:0.1, cat:'sweets'},
+  // Drinks
+  {ar:'مياه غازية', en:'Soda (cola)', cal:42, p:0, c:10.6, f:0, cat:'drinks'},
+  {ar:'عصير مانجو معلب', en:'Packaged mango juice', cal:54, p:0.3, c:13, f:0.1, cat:'drinks'},
+  {ar:'عصير برتقال طازة', en:'Fresh orange juice', cal:45, p:0.7, c:10, f:0.2, cat:'drinks'},
+  {ar:'قهوة سادة', en:'Black coffee', cal:2, p:0.1, c:0, f:0, cat:'drinks'},
+  {ar:'شاي بسكر', en:'Tea with sugar', cal:20, p:0, c:5, f:0, cat:'drinks'},
+  {ar:'مشروب طاقة', en:'Energy drink', cal:45, p:0, c:11, f:0, cat:'drinks'},
+];
+
+const CATEGORIES = ['all','protein','carbs','dairy','fruit','veg','nuts','fastfood','sweets','drinks'];
+let activeCat = 'all';
+let searchTerm = '';
+let selectedFoodIdx = null;
+
+/* Custom foods (user-added) */
+function loadCustomFoods(){ try{ return JSON.parse(localStorage.getItem('gemaweya_custom_foods')||'[]'); }catch(e){ return []; } }
+function saveCustomFoods(list){ localStorage.setItem('gemaweya_custom_foods', JSON.stringify(list)); }
+let CUSTOM_FOODS = loadCustomFoods();
+function allFoods(){ return FOODS.concat(CUSTOM_FOODS); }
+
+function applyLang(){
+  document.getElementById('htmlRoot').lang = lang;
+  document.getElementById('htmlRoot').dir = lang==='ar' ? 'rtl':'ltr';
+  document.body.dir = lang==='ar' ? 'rtl':'ltr';
+  document.getElementById('langToggle').textContent = lang==='ar' ? 'EN':'AR';
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const key = el.getAttribute('data-t');
+    if(T[lang][key] !== undefined) el.innerHTML = T[lang][key];
+  });
+  document.querySelectorAll('[data-t-ph]').forEach(el=>{
+    const key = el.getAttribute('data-t-ph');
+    if(T[lang][key] !== undefined) el.placeholder = T[lang][key];
+  });
+  renderChips();
+  renderCustomCatOptions();
+  renderFoodResults();
+  renderSelectedName();
+  renderLog();
+  renderGauge();
+  renderWeightChart();
+  renderHistory();
+}
+document.getElementById('langToggle').addEventListener('click', ()=>{
+  lang = lang==='ar' ? 'en':'ar';
+  applyLang();
+});
+
+function catLabel(cat){
+  const map = {all:'catAll',protein:'catProtein',carbs:'catCarbs',dairy:'catDairy',fruit:'catFruit',veg:'catVeg',nuts:'catNuts',fastfood:'catFastfood',sweets:'catSweets',drinks:'catDrinks'};
+  return T[lang][map[cat]];
+}
+function renderChips(){
+  const wrap = document.getElementById('catChips');
+  wrap.innerHTML = CATEGORIES.map(c=>`<button class="chip ${c===activeCat?'active':''}" data-cat="${c}">${catLabel(c)}</button>`).join('');
+  wrap.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      activeCat = chip.getAttribute('data-cat');
+      renderChips();
+      renderFoodResults();
+    });
+  });
+}
+function renderCustomCatOptions(){
+  const sel = document.getElementById('cfCat');
+  sel.innerHTML = CATEGORIES.filter(c=>c!=='all').map(c=>`<option value="${c}">${catLabel(c)}</option>`).join('');
+}
+
+document.getElementById('foodSearch').addEventListener('input', (e)=>{
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderFoodResults();
+});
+
+document.getElementById('customToggle').addEventListener('click', ()=>{
+  document.getElementById('customForm').classList.toggle('open');
+});
+
+document.getElementById('saveCustomBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('cfName').value.trim();
+  const cal = parseFloat(document.getElementById('cfCal').value);
+  const p = parseFloat(document.getElementById('cfP').value) || 0;
+  const c = parseFloat(document.getElementById('cfC').value) || 0;
+  const f = parseFloat(document.getElementById('cfF').value) || 0;
+  const cat = document.getElementById('cfCat').value;
+  if(!name || !cal){
+    alert(T[lang].customFillAll);
+    return;
+  }
+  CUSTOM_FOODS.push({ar:name, en:name, cal, p, c, f, cat});
+  saveCustomFoods(CUSTOM_FOODS);
+  document.getElementById('cfName').value='';
+  document.getElementById('cfCal').value='';
+  document.getElementById('cfP').value='';
+  document.getElementById('cfC').value='';
+  document.getElementById('cfF').value='';
+  document.getElementById('customForm').classList.remove('open');
+  renderFoodResults();
+});
+
+function renderFoodResults(){
+  const wrap = document.getElementById('foodResults');
+  let list = allFoods().map((f,i)=>({...f, idx:i}));
+  if(activeCat!=='all') list = list.filter(f=>f.cat===activeCat);
+  if(searchTerm) list = list.filter(f=> f.ar.toLowerCase().includes(searchTerm) || f.en.toLowerCase().includes(searchTerm));
+  if(list.length===0){
+    wrap.innerHTML = `<div class="food-results-empty">${T[lang].noResults}</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(f=>`
+    <div class="food-row ${f.idx===selectedFoodIdx?'selected':''}" data-idx="${f.idx}">
+      <span class="food-row-name">${lang==='ar'?f.ar:f.en}</span>
+      <span class="food-row-cal num">${f.cal} ${lang==='ar'?'سعرة/100غ':'kcal/100g'}</span>
+    </div>`).join('');
+  wrap.querySelectorAll('.food-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      selectedFoodIdx = parseInt(row.getAttribute('data-idx'));
+      renderFoodResults();
+      renderSelectedName();
+    });
+  });
+}
+
+function renderSelectedName(){
+  const el = document.getElementById('selectedName');
+  const btn = document.getElementById('addFoodBtn');
+  if(selectedFoodIdx===null){
+    el.innerHTML = T[lang].noSelection;
+    btn.disabled = true;
+    return;
+  }
+  const f = allFoods()[selectedFoodIdx];
+  el.innerHTML = `<b>${lang==='ar'?f.ar:f.en}</b>`;
+  btn.disabled = false;
+}
+
+/* ---------------- Storage ---------------- */
+const todayKey = ()=> new Date().toISOString().slice(0,10);
+function loadTarget(){ try{ return JSON.parse(localStorage.getItem('gemaweya_target')||'null'); }catch(e){ return null; } }
+function saveTarget(t){ localStorage.setItem('gemaweya_target', JSON.stringify(t)); }
+function loadLog(){
+  try{ const all = JSON.parse(localStorage.getItem('gemaweya_log')||'{}'); return all[todayKey()] || []; }
+  catch(e){ return []; }
+}
+function saveLog(items){
+  const all = JSON.parse(localStorage.getItem('gemaweya_log')||'{}');
+  all[todayKey()] = items;
+  const keys = Object.keys(all).sort();
+  while(keys.length > 14){ delete all[keys.shift()]; }
+  localStorage.setItem('gemaweya_log', JSON.stringify(all));
+}
+
+/* ---------------- Calculator ---------------- */
+let selectedGoal = 'maintain';
+document.getElementById('goalSeg').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  document.querySelectorAll('#goalSeg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedGoal = btn.getAttribute('data-goal');
+});
+
+document.getElementById('calcBtn').addEventListener('click', ()=>{
+  const w = parseFloat(document.getElementById('inWeight').value);
+  const h = parseFloat(document.getElementById('inHeight').value);
+  const a = parseFloat(document.getElementById('inAge').value);
+  const gender = document.getElementById('inGender').value;
+  const act = parseFloat(document.getElementById('inActivity').value);
+  if(!w || !h || !a){
+    alert(lang==='ar' ? 'من فضلك دخل الوزن والطول والسن' : 'Please enter weight, height and age');
+    return;
+  }
+  let bmr = gender==='male' ? (10*w + 6.25*h - 5*a + 5) : (10*w + 6.25*h - 5*a - 161);
+  let tdee = bmr * act;
+  let calTarget = tdee;
+  if(selectedGoal==='cut') calTarget = tdee * 0.8;
+  if(selectedGoal==='bulk') calTarget = tdee * 1.15;
+  calTarget = Math.round(calTarget);
+
+  const pTarget = Math.round(w * 2);
+  const fTarget = Math.round((calTarget * 0.25) / 9);
+  const cTarget = Math.round((calTarget - (pTarget*4) - (fTarget*9)) / 4);
+
+  saveTarget({calTarget, pTarget, cTarget, fTarget, w, h, a, gender, act, goal:selectedGoal});
+  renderGauge();
+  document.getElementById('gaugeRing').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+/* ---------------- Gauge / Macros rendering ---------------- */
+function computeTotals(){
+  const items = loadLog();
+  let cal=0,p=0,c=0,f=0;
+  items.forEach(it=>{
+    const food = allFoods()[it.foodIdx];
+    const ratio = it.grams/100;
+    cal += food.cal*ratio; p += food.p*ratio; c += food.c*ratio; f += food.f*ratio;
+  });
+  return {cal:Math.round(cal), p:Math.round(p), c:Math.round(c), f:Math.round(f), items};
+}
+
+function renderGauge(){
+  const target = loadTarget();
+  const totals = computeTotals();
+  const ring = document.getElementById('gaugeRing');
+  const numEl = document.getElementById('gaugeNum');
+  const targetEl = document.getElementById('gaugeTarget');
+  const labelEl = document.querySelector('.gauge-label');
+
+  if(!target){
+    ring.style.setProperty('--pct', 0);
+    numEl.textContent = '—';
+    targetEl.textContent = T[lang].setGoalFirst;
+    ring.classList.remove('hot');
+    renderMacros();
+    return;
+  }
+  const remaining = target.calTarget - totals.cal;
+  const pct = Math.min(100, Math.max(0,(totals.cal/target.calTarget)*100));
+  ring.style.setProperty('--pct', pct);
+  ring.classList.toggle('hot', pct>60);
+  numEl.textContent = Math.abs(remaining);
+  labelEl.textContent = remaining>=0 ? T[lang].remainLabel : T[lang].overLabel;
+  targetEl.textContent = T[lang].targetPrefix + target.calTarget;
+  renderMacros();
+}
+
+function renderMacros(){
+  const target = loadTarget();
+  const totals = computeTotals();
+  const pT = target?target.pTarget:0, cT = target?target.cTarget:0, fT = target?target.fTarget:0;
+  document.getElementById('proteinVal').textContent = `${totals.p}/${pT}${lang==='ar'?'غ':'g'}`;
+  document.getElementById('carbsVal').textContent = `${totals.c}/${cT}${lang==='ar'?'غ':'g'}`;
+  document.getElementById('fatVal').textContent = `${totals.f}/${fT}${lang==='ar'?'غ':'g'}`;
+  document.getElementById('proteinBar').style.width = pT? Math.min(100,(totals.p/pT)*100)+'%':'0%';
+  document.getElementById('carbsBar').style.width = cT? Math.min(100,(totals.c/cT)*100)+'%':'0%';
+  document.getElementById('fatBar').style.width = fT? Math.min(100,(totals.f/fT)*100)+'%':'0%';
+}
+
+/* ---------------- Log rendering ---------------- */
+function renderLog(){
+  const items = loadLog();
+  const list = document.getElementById('logList');
+  document.getElementById('logDate').textContent = new Date().toLocaleDateString(lang==='ar'?'ar-EG':'en-GB');
+  if(items.length===0){
+    list.innerHTML = `<div class="log-empty">${T[lang].logEmpty}</div>`;
+    return;
+  }
+  list.innerHTML = items.map((it,idx)=>{
+    const food = allFoods()[it.foodIdx];
+    const cal = Math.round(food.cal * it.grams/100);
+    return `<div class="log-item">
+      <div>
+        <div class="log-name">${lang==='ar'?food.ar:food.en}</div>
+        <div class="log-grams num">${it.grams}${lang==='ar'?'غ':'g'}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="log-cals num">${cal} ${lang==='ar'?'سعرة':'kcal'}</div>
+        <button class="log-del" data-idx="${idx}">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.log-del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      const items = loadLog();
+      items.splice(idx,1);
+      saveLog(items);
+      renderLog();
+      renderGauge();
+    });
+  });
+}
+
+document.getElementById('addFoodBtn').addEventListener('click', ()=>{
+  if(selectedFoodIdx===null) return;
+  const grams = parseFloat(document.getElementById('gramsInput').value);
+  if(!grams || grams<=0){
+    alert(lang==='ar' ? 'دخل عدد الجرامات' : 'Enter the grams');
+    return;
+  }
+  const items = loadLog();
+  items.push({foodIdx:selectedFoodIdx, grams});
+  saveLog(items);
+  document.getElementById('gramsInput').value = '';
+  renderLog();
+  renderGauge();
+});
+
+/* ---------------- Weight tracker ---------------- */
+function loadWeights(){ try{ return JSON.parse(localStorage.getItem('gemaweya_weights')||'[]'); }catch(e){ return []; } }
+function saveWeights(list){ localStorage.setItem('gemaweya_weights', JSON.stringify(list)); }
+
+document.getElementById('saveWeightBtn').addEventListener('click', ()=>{
+  const w = parseFloat(document.getElementById('weightInput').value);
+  if(!w || w<=0){
+    alert(lang==='ar' ? 'دخل وزن صحيح' : 'Enter a valid weight');
+    return;
+  }
+  let list = loadWeights();
+  const key = todayKey();
+  const existing = list.findIndex(x=>x.date===key);
+  if(existing>=0) list[existing].weight = w;
+  else list.push({date:key, weight:w});
+  list.sort((a,b)=> a.date.localeCompare(b.date));
+  saveWeights(list);
+  document.getElementById('weightInput').value = '';
+  renderWeightChart();
+});
+
+function renderWeightChart(){
+  const list = loadWeights();
+  const svg = document.getElementById('weightChart');
+  const emptyEl = document.getElementById('weightEmpty');
+  const metaEl = document.getElementById('weightMeta');
+  if(list.length===0){
+    svg.innerHTML = '';
+    emptyEl.style.display = 'block';
+    metaEl.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  metaEl.style.display = 'flex';
+  const recent = list.slice(-30);
+  const weights = recent.map(x=>x.weight);
+  const minW = Math.min(...weights), maxW = Math.max(...weights);
+  const range = (maxW - minW) || 1;
+  const W = 600, H = 140, padX = 12, padY = 16;
+  const stepX = recent.length>1 ? (W - padX*2) / (recent.length-1) : 0;
+  const pts = recent.map((r,i)=>{
+    const x = padX + i*stepX;
+    const y = H - padY - ((r.weight - minW)/range) * (H - padY*2);
+    return [x,y];
+  });
+  const pathD = pts.map((p,i)=> (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const areaD = pathD + ` L${pts[pts.length-1][0].toFixed(1)},${H} L${pts[0][0].toFixed(1)},${H} Z`;
+  const dots = pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#ff5a1f"/>`).join('');
+  svg.innerHTML = `
+    <path d="${areaD}" fill="rgba(255,90,31,0.12)" stroke="none"></path>
+    <path d="${pathD}" fill="none" stroke="#ff5a1f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+    ${dots}`;
+  metaEl.innerHTML = `<span>${T[lang].weightFirst}: ${recent[0].weight}${lang==='ar'?'كجم':'kg'} (${recent[0].date})</span><span>${T[lang].weightLast}: ${recent[recent.length-1].weight}${lang==='ar'?'كجم':'kg'} (${recent[recent.length-1].date})</span>`;
+}
+
+/* ---------------- History ---------------- */
+function loadAllLogs(){ try{ return JSON.parse(localStorage.getItem('gemaweya_log')||'{}'); }catch(e){ return {}; } }
+
+function renderHistory(){
+  const card = document.getElementById('historyCard');
+  const all = loadAllLogs();
+  const dates = Object.keys(all).filter(d=> all[d] && all[d].length>0 && d!==todayKey()).sort().reverse();
+  if(dates.length===0){
+    card.innerHTML = `<div class="chart-empty">${T[lang].historyEmpty}</div>`;
+    return;
+  }
+  card.innerHTML = dates.map(d=>{
+    const items = all[d];
+    let cal=0;
+    items.forEach(it=>{
+      const food = allFoods()[it.foodIdx];
+      if(food) cal += Math.round(food.cal * it.grams/100);
+    });
+    return `<div class="history-day">
+      <div class="history-head" data-date="${d}">
+        <div>
+          <div class="history-date">${d}</div>
+          <div class="history-summary">${T[lang].historyItemsCount(items.length)}</div>
+        </div>
+        <div class="history-cal num">${cal} ${lang==='ar'?'سعرة':'kcal'}</div>
+      </div>
+      <div class="history-items" id="hist-${d}">
+        ${items.map(it=>{
+          const food = allFoods()[it.foodIdx];
+          if(!food) return '';
+          const c = Math.round(food.cal * it.grams/100);
+          return `<div class="history-item-row"><span>${lang==='ar'?food.ar:food.en} (${it.grams}${lang==='ar'?'غ':'g'})</span><span class="num">${c} ${lang==='ar'?'سعرة':'kcal'}</span></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  card.querySelectorAll('.history-head').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      const d = head.getAttribute('data-date');
+      document.getElementById('hist-'+d).classList.toggle('open');
+    });
+  });
+}
+
+/* ---------------- PWA: install banner + service worker ---------------- */
+let deferredInstallPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const installCloseBtn = document.getElementById('installCloseBtn');
+
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function isIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function showInstallBanner(){
+  if(isStandalone()) return;
+  if(localStorage.getItem('gemaweya_install_dismissed')==='1') return;
+  installBanner.classList.add('show');
+}
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallBanner();
+});
+window.addEventListener('appinstalled', ()=>{
+  installBanner.classList.remove('show');
+  localStorage.setItem('gemaweya_install_dismissed', '1');
+});
+installBtn.addEventListener('click', async ()=>{
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBanner.classList.remove('show');
+  } else if(isIOS()){
+    alert(T[lang].installIosHint);
+  } else {
+    installBanner.classList.remove('show');
+  }
+});
+installCloseBtn.addEventListener('click', ()=>{
+  installBanner.classList.remove('show');
+  localStorage.setItem('gemaweya_install_dismissed', '1');
+});
+// Show something immediately for iOS (no beforeinstallprompt event exists there)
+if(isIOS() && !isStandalone()){
+  setTimeout(showInstallBanner, 1200);
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+/* ---------------- Init ---------------- */
+function init(){
+  const target = loadTarget();
+  if(target){
+    document.getElementById('inWeight').value = target.w;
+    document.getElementById('inHeight').value = target.h;
+    document.getElementById('inAge').value = target.a;
+    document.getElementById('inGender').value = target.gender;
+    document.getElementById('inActivity').value = target.act;
+    selectedGoal = target.goal;
+    document.querySelectorAll('#goalSeg button').forEach(b=>{
+      b.classList.toggle('active', b.getAttribute('data-goal')===target.goal);
+    });
+  }
+  applyLang();
+}
+init();
+</script>
+</body>
+</html>
