@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gemaweya-v4';
+const CACHE_NAME = 'gemaweya-v5';
 const ASSETS = [
   './',
   './index.html',
