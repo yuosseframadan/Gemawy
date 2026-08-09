@@ -319,6 +319,16 @@ section{margin-top:40px;}
 .mini-row-meta{color:var(--text-muted); font-size:11.5px;}
 .mini-del{background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:15px;}
 
+/* Store */
+.store-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:14px;}
+.store-card{background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;}
+.store-card-img{width:100%; aspect-ratio:1; background:var(--bg-panel); display:flex; align-items:center; justify-content:center; font-size:32px;}
+.store-card-body{padding:10px; display:flex; flex-direction:column; gap:6px; flex:1;}
+.store-card-name{font-size:13px; font-weight:700;}
+.store-card-price{font-family:var(--font-display); color:var(--ember); font-size:15px;}
+.store-card-btn{margin-top:auto; background:#25D366; color:#0a0a0a; border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:700; cursor:pointer;}
+@media(max-width:420px){ .store-grid{grid-template-columns:1fr 1fr;} }
+
 footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-size:11px;}
 
 @media(max-width:520px){
@@ -456,6 +466,9 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
     <button class="shortcut-card" data-open-sheet="sheet-history">
       <span class="shortcut-icon">🗂</span><span data-t="navHistory">سجل</span>
     </button>
+    <button class="shortcut-card" data-open-sheet="sheet-store">
+      <span class="shortcut-icon">🛒</span><span data-t="navStore">متجر</span>
+    </button>
     <button class="shortcut-card" id="aiShortcutBtn" data-open-sheet="sheet-ai">
       <span class="shortcut-icon">🤖</span><span data-t="navAi">مساعد</span>
     </button>
@@ -576,6 +589,21 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         <div id="historyCard">
           <div class="chart-empty" data-t="historyEmpty">لسه مفيش أيام مسجلة</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE (sheet) -->
+  <div class="settings-overlay" id="sheet-store">
+    <div class="settings-panel">
+      <div class="settings-head">
+        <div class="section-title" data-t="storeTitle">المتجر</div>
+        <button class="settings-close" data-close-sheet>✕</button>
+      </div>
+      <div class="settings-body">
+        <div class="chips" id="storeChips"></div>
+        <div id="storeGrid" class="store-grid"></div>
+        <div id="storeEmpty" class="chart-empty" data-t="storeEmpty" style="display:none;">قريبًا 🛒</div>
       </div>
     </div>
   </div>
@@ -781,7 +809,10 @@ const T = {
     dayModeAutoHint:'اليوم بيتغير لوحده الساعة 12:00 بالليل',
     dayModeManualHint:(key)=> `اليوم الحالي: ${key} — هيفضل مفتوح لحد ما تدوس "إنهاء اليوم"`,
     endDayBtn:'إنهاء اليوم دلوقتي',
-    navMeals:'وجبات', navWater:'مياه', navWeight:'وزن', navMeasure:'قياسات', navWorkout:'تمارين', navPhotos:'صور', navHistory:'سجل', navAi:'مساعد',
+    navMeals:'وجبات', navWater:'مياه', navWeight:'وزن', navMeasure:'قياسات', navWorkout:'تمارين', navPhotos:'صور', navHistory:'سجل', navAi:'مساعد', navStore:'متجر',
+    storeTitle:'المتجر', storeEmpty:'قريبًا 🛒',
+    storeCatAll:'الكل', storeCatBrand:'الجماوية', storeCatMeals:'وجبات دايت', storeCatClothes:'هدوم جيم',
+    storeOrderBtn:'اطلب واتساب', storeOrderMsg:(name)=> `عايز أطلب: ${name}`,
     aiTitle:'المساعد الذكي',
     aiWelcome:'أهلاً! اسألني عن وصفات، أو قولي إيه اللي أكلته وأنا أحسبهولك وأضيفه في سجل وجباتك، أو اسألني عن أي جزء في الموقع.',
     aiInputPh:'اكتب رسالتك...',
@@ -799,6 +830,7 @@ const T = {
     aiWalk4:'الأزرار تحت (💧⚖📏🏋📷🗂) بتفتحلك: المياه، الوزن، القياسات، التمارين، الصور، والسجل التاريخي — كل واحد صفحة لوحدها عشان الشاشة الرئيسية تفضل بسيطة.',
     aiWalk5:'زرار الترس ⚙ فوق فيه كل إعداداتك: بياناتك (وزن/طول/هدف)، تعديل الماكروز يدويًا، إدارة اليوم، التنبيهات، والنسخة الاحتياطية.',
     aiWalk6:'وأنا هنا دايمًا لو عايز وصفة أو نسيت حاجة أو عايز تسأل عن أي جزء في الموقع. جرب دلوقتي! 💪',
+    aiWalk7:'وفيه كمان قسم "🛒 متجر" فيه منتجات الجماوية ووجبات دايت وهدوم جيم، تطلب أي حاجة منه بواتساب على طول.',
     settingsTitle:'الإعدادات',
     onboardingTitle:'ابدأ من هنا', onboardingSub:'اضبط وزنك وطولك وهدفك عشان نحسبلك احتياجك اليومي', onboardingBtn:'ابدأ',
     onboardingNote:'اضبط بياناتك الأول عشان نحسبلك احتياجك اليومي',
@@ -860,7 +892,10 @@ const T = {
     dayModeAutoHint:'The day switches over automatically at 12:00 AM',
     dayModeManualHint:(key)=> `Current day: ${key} — stays open until you tap "End day"`,
     endDayBtn:'End day now',
-    navMeals:'Meals', navWater:'Water', navWeight:'Weight', navMeasure:'Measure', navWorkout:'Workout', navPhotos:'Photos', navHistory:'History', navAi:'Assistant',
+    navMeals:'Meals', navWater:'Water', navWeight:'Weight', navMeasure:'Measure', navWorkout:'Workout', navPhotos:'Photos', navHistory:'History', navAi:'Assistant', navStore:'Store',
+    storeTitle:'Store', storeEmpty:'Coming soon 🛒',
+    storeCatAll:'All', storeCatBrand:'Gemaweya', storeCatMeals:'Diet meals', storeCatClothes:'Gym wear',
+    storeOrderBtn:'Order on WhatsApp', storeOrderMsg:(name)=> `I'd like to order: ${name}`,
     aiTitle:'AI Assistant',
     aiWelcome:"Hi! Ask me for recipes, tell me what you ate and I'll calculate it and add it to your log, or ask me about any part of the site.",
     aiInputPh:'Type your message...',
@@ -878,6 +913,7 @@ const T = {
     aiWalk4:'The buttons below (💧⚖📏🏋📷🗂) open: Water, Weight, Measurements, Workouts, Photos, and History — each its own page so the home screen stays simple.',
     aiWalk5:'The ⚙ gear icon up top has all your settings: your info (weight/height/goal), manual macro overrides, day management, notifications, and backup.',
     aiWalk6:"And I'm always here if you want a recipe, forgot something, or want to ask about any part of the site. Try it now! 💪",
+    aiWalk7:'There\'s also a "🛒 Store" section with Gemaweya products, diet meals, and gym wear — order anything directly via WhatsApp.',
     settingsTitle:'Settings',
     onboardingTitle:'Start here', onboardingSub:'Set your weight, height, and goal so we can calculate your daily target', onboardingBtn:'Start',
     onboardingNote:'Set your details first so we can calculate your daily target',
@@ -1167,6 +1203,8 @@ function applyLang(){
   renderMeasurements();
   renderWorkouts();
   renderDayModeUI();
+  renderStoreChips();
+  renderStoreGrid();
   if(document.getElementById('notifSection').style.display !== 'none'){ updateNotifUI(); }
 }
 document.getElementById('langToggle').addEventListener('click', ()=>{
@@ -2188,6 +2226,53 @@ setInterval(()=>{
 }, 30*1000);
 
 /* ---------------- AI Assistant (local rule-based — no server/API) ---------------- */
+/* ---------------- Store ---------------- */
+// TODO: replace with the real order WhatsApp number (international format, no + or leading 0)
+const STORE_WHATSAPP = "201092377837";
+// Add real products here: {ar, en, price, cat:'brand'|'meals'|'clothes', emoji}
+// (emoji is a placeholder until real product photos are added)
+const PRODUCTS = [];
+
+let storeActiveCat = 'all';
+function renderStoreChips(){
+  const cats = [
+    {id:'all', key:'storeCatAll'}, {id:'brand', key:'storeCatBrand'},
+    {id:'meals', key:'storeCatMeals'}, {id:'clothes', key:'storeCatClothes'}
+  ];
+  const wrap = document.getElementById('storeChips');
+  wrap.innerHTML = cats.map(c=>`<button class="chip ${c.id===storeActiveCat?'active':''}" data-cat="${c.id}">${T[lang][c.key]}</button>`).join('');
+  wrap.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      storeActiveCat = chip.getAttribute('data-cat');
+      renderStoreChips();
+      renderStoreGrid();
+    });
+  });
+}
+function renderStoreGrid(){
+  const grid = document.getElementById('storeGrid');
+  const empty = document.getElementById('storeEmpty');
+  const list = storeActiveCat==='all' ? PRODUCTS : PRODUCTS.filter(p=>p.cat===storeActiveCat);
+  if(list.length===0){
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = list.map(p=>{
+    const name = lang==='ar' ? p.ar : p.en;
+    const waMsg = encodeURIComponent(T[lang].storeOrderMsg(name));
+    return `<div class="store-card">
+      <div class="store-card-img">${p.emoji||'🛍'}</div>
+      <div class="store-card-body">
+        <div class="store-card-name">${name}</div>
+        <div class="store-card-price num">${p.price}</div>
+        <a class="store-card-btn" href="https://wa.me/${STORE_WHATSAPP}?text=${waMsg}" target="_blank" rel="noopener">${T[lang].storeOrderBtn}</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 const RECIPES = [
   {ar:'بيض بالسبانخ', en:'Eggs with spinach', ar_ing:'3 بيضات، حفنة سبانخ، شوية زيت زيتون', en_ing:'3 eggs, a handful of spinach, a splash of olive oil', cal:280, p:19, c:3, f:21},
   {ar:'أرز بروتين بالفراخ', en:'Protein rice bowl', ar_ing:'150غ صدر فرخ مشوي، 150غ أرز أبيض، خضار مشوي', en_ing:'150g grilled chicken breast, 150g white rice, grilled vegetables', cal:520, p:48, c:60, f:8},
@@ -2286,6 +2371,8 @@ const FAQ_INTENTS = [
    ar:'زرار "EN"/"AR" فوق بيبدل لغة الموقع كله على طول، بما فيهم أنا 🙂', en:'The "EN"/"AR" button up top switches the entire site\'s language instantly, including me 🙂', open:null},
   {kw_ar:['مسح البيانات','امسح كل حاجة','ريسيت'], kw_en:['reset','delete all data','erase'],
    ar:'من الإعدادات ⚙ في آخر جزء "منطقة الخطر" فيه زرار يمسح كل بياناتك من الجهاز ده نهائيًا — لازم تصدّر نسخة احتياطية الأول لو عايز ترجعلها.', en:'In Settings ⚙, the last "Danger zone" section has a button that permanently erases all your data on this device — export a backup first if you want to keep it.', open:'settings'},
+  {kw_ar:['متجر','اطلب','اشتري','هدوم','منتج'], kw_en:['store','shop','order','buy','clothes','product'],
+   ar:'من قسم "متجر" تقدر تشوف منتجات الجماوية، وجبات الدايت من المطابخ الشريكة، وهدوم الجيم — وتطلب أي حاجة على طول من واتساب.', en:'From the "Store" section you can browse Gemaweya products, diet meals from partner kitchens, and gym wear — and order anything directly via WhatsApp.', open:'sheet-store'},
   {kw_ar:['ذكاء اصطناعي','مساعد','انت مين','بتفهم ازاي'], kw_en:['ai','assistant','who are you','how do you work'],
    ar:'أنا مساعد ذكي محلي بشتغل بمطابقة كلامك مع قاعدة بيانات الأكل والموقع — مش AI حقيقي زي ChatGPT، وبشتغل بالكامل من غير إنترنت أو سيرفر.', en:"I'm a local rule-based assistant that matches your words against the food database and the site's features — not a real AI like ChatGPT, and I work fully offline with no server.", open:null},
 ];
@@ -2541,7 +2628,7 @@ document.getElementById('aiShortcutBtn').addEventListener('click', ()=>{
 function maybeStartAiWalkthrough(){
   if(localStorage.getItem('gemaweya_ai_walkthrough_shown')==='1') return;
   localStorage.setItem('gemaweya_ai_walkthrough_shown', '1');
-  const keys = ['aiWalk1','aiWalk2','aiWalk3','aiWalk4','aiWalk5','aiWalk6'];
+  const keys = ['aiWalk1','aiWalk2','aiWalk3','aiWalk4','aiWalk5','aiWalk7','aiWalk6'];
   keys.forEach((k, i)=>{
     setTimeout(()=> addAiMessage(T[lang][k], 'bot'), i*120);
   });
