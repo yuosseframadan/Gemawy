@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gemaweya-v5';
+const CACHE_NAME = 'gemaweya-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -53,4 +53,68 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => cached);
     })
   );
+});
+
+/* ---------------- Background notification checks (Periodic Background Sync) ----------------
+   Only fires on browsers/platforms that support it (currently: installed PWAs on Android
+   Chrome/Edge, when the browser decides the app is "frequently used"). There is no equivalent
+   API on iOS/desktop Safari or Firefox, so this cannot bring background notifications there. */
+const IDB_NAME = 'gemaweya-kv', IDB_STORE = 'kv';
+function idbOpenSW(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbGetSW(key){
+  try{
+    const db = await idbOpenSW();
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(undefined);
+    });
+  }catch(e){ return undefined; }
+}
+async function idbSetSW(key, value){
+  try{
+    const db = await idbOpenSW();
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  }catch(e){}
+}
+async function checkNotifInBackground(){
+  const now = Date.now();
+  const hour = new Date().getHours();
+
+  // Meal reminder: awake hours, nothing logged in the last 4 hours
+  const lastMealTime = (await idbGetSW('last_meal_time')) || 0;
+  const bgLastMealNotif = (await idbGetSW('bg_last_meal_notif')) || 0;
+  if(hour>=8 && hour<=23 && now - lastMealTime >= 4*60*60*1000 && now - bgLastMealNotif >= 4*60*60*1000){
+    await self.registration.showNotification('الجماوية', {
+      body: 'وقتها تسجل وجبتك 🍽️', icon: 'icon-192.png', badge: 'icon-192.png'
+    });
+    await idbSetSW('bg_last_meal_notif', now);
+  }
+
+  // Water reminder: every ~2 hours
+  const bgLastWaterNotif = (await idbGetSW('bg_last_water_notif')) || 0;
+  if(now - bgLastWaterNotif >= 2*60*60*1000){
+    await self.registration.showNotification('الجماوية', {
+      body: 'خد شوية مياه دلوقتي 💧', icon: 'icon-192.png', badge: 'icon-192.png'
+    });
+    await idbSetSW('bg_last_water_notif', now);
+  }
+}
+self.addEventListener('periodicsync', (event) => {
+  if(event.tag === 'gemaweya-notif-check'){
+    event.waitUntil(checkNotifInBackground());
+  }
 });
