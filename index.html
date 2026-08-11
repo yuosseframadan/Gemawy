@@ -203,6 +203,9 @@ section{margin-top:40px;}
 .log-grams{font-size:12px; color:var(--text-muted);}
 .log-cals{font-family:var(--font-display); font-size:14px; color:var(--ember);}
 .log-del{background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:0 4px;}
+.log-note-btn{background:none; border:none; cursor:pointer; font-size:13px; padding:0 2px; opacity:.6;}
+.log-note-btn:hover{opacity:1;}
+.log-note{font-size:11px; color:var(--text-muted); margin-top:3px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
 /* Install banner */
 .install-banner{
@@ -403,6 +406,7 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         </div>
       </div>
     </div>
+    <div class="section-sub" id="gaugeNudge" style="max-width:280px; margin:8px auto 0; text-align:center;"></div>
 
     <div class="macros">
       <div class="macro-card">
@@ -552,6 +556,16 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         </div>
         <div id="measureEmpty" class="chart-empty" data-t="measureEmpty">لسه مفيش قياسات مسجلة</div>
         <div id="measureList" style="margin-top:6px;"></div>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+          <div class="settings-block-title" data-t="bodyFatTitle">نسبة الدهون التقريبية</div>
+          <div class="form-grid">
+            <div class="field"><label data-t="bodyFatNeck">الرقبة (سم)</label><input type="number" id="mNeck"></div>
+            <div class="field"><label data-t="measureHip">الحوض (سم)</label><input type="number" id="mHip"></div>
+          </div>
+          <button class="btn-ghost" id="calcBodyFatBtn" data-t="bodyFatCalc" style="margin-top:10px;">احسب</button>
+          <div class="section-sub num" id="bodyFatResult" style="margin-top:8px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -610,7 +624,9 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         <button class="settings-close" data-close-sheet>✕</button>
       </div>
       <div class="settings-body">
-        <div class="section-sub" data-t="historySub" style="margin-bottom:12px;">آخر 14 يوم</div>
+        <div class="settings-block-title" data-t="weekChartTitle">آخر 7 أيام</div>
+        <div class="chart-wrap"><svg id="weekChart" width="100%" height="120" viewBox="0 0 600 120" preserveAspectRatio="none"></svg></div>
+        <div class="section-sub" data-t="historySub" style="margin:16px 0 12px;">آخر 14 يوم</div>
         <div id="historyCard">
           <div class="chart-empty" data-t="historyEmpty">لسه مفيش أيام مسجلة</div>
         </div>
@@ -770,6 +786,7 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         <div class="settings-block-title" data-t="aboutTitle">عن المنصة</div>
         <div class="section-sub" data-t="aboutText" style="line-height:1.7;">منصة الجماوية — تتبع، تحلل، تطور. بدون سيرفر، بياناتك على جهازك بس.</div>
         <div class="section-sub num" style="margin-top:6px; opacity:.6;">v1.0</div>
+        <button class="btn-ghost" id="inviteBtn" data-t="inviteBtn" style="margin-top:12px;">📨 ادعُ صديق</button>
       </div>
 
       <div class="settings-block">
@@ -827,7 +844,7 @@ const T = {
     shareBtn:'📤 مشاركة يومك',
     waterTitle:'المياه', waterCups:'كوباية', waterGoalReached:'وصلت لهدفك 💧',
     measureTitle:'قياسات الجسم', measureSub:'خصر / صدر / ذراع (سم)',
-    measureWaist:'الخصر', measureChest:'الصدر', measureArm:'الذراع', measureEmpty:'لسه مفيش قياسات مسجلة',
+    measureWaist:'الخصر', measureChest:'الصدر', measureArm:'الذراع', measureHip:'الحوض', measureEmpty:'لسه مفيش قياسات مسجلة',
     workoutTitle:'سجل التمارين', workoutName:'اسم التمرين', workoutSets:'مجموعات', workoutReps:'تكرارات',
     workoutAdd:'إضافة تمرين', workoutEmpty:'لسه مفيش تمارين مسجلة النهاردة',
     workoutSetsRepsLabel:(s,r)=> `${s} × ${r}`,
@@ -840,6 +857,13 @@ const T = {
     storeCatAll:'الكل', storeCatBrand:'الجماوية', storeCatMeals:'وجبات دايت', storeCatClothes:'هدوم جيم',
     storeOrderBtn:'اطلب واتساب', storeOrderMsg:(name)=> `عايز أطلب: ${name}`,
     editGramsHint:'دوس تعدل الجرامات', editGramsPrompt:'الجرامات الجديدة:',
+    addNoteHint:'ضيف ملاحظة', addNotePrompt:'ملاحظة على الوجبة دي:',
+    bodyFatTitle:'نسبة الدهون التقريبية', bodyFatNeck:'الرقبة (سم)', bodyFatCalc:'احسب', bodyFatResult:(pct)=> `نسبة الدهون التقريبية: ${pct}%`,
+    bodyFatNeedData:'محتاج تدخل الرقبة والخصر والطول والنوع الأول',
+    weekChartTitle:'آخر 7 أيام', inviteBtn:'📨 ادعُ صديق', inviteMsg:'جرب معايا منصة الجماوية لتتبع أكلك وتمرينك 💪',
+    inviteCopied:'اتنسخ الرابط ✅',
+    nudgeOver:'سعراتك زادت عن هدفك بوضوح النهاردة — مفيش مشكلة، بكرة يوم جديد 🙂',
+    nudgeUnder:'لسه باقيلك سعرات كتير من هدفك — متنساش تاكل كفاية 🍽️',
     repeatYesterdayBtn:'🔁 كرر أكل امبارح', repeatYesterdayEmpty:'مفيش يوم فات مسجل فيه وجبات',
     repeatYesterdayConfirm:(d,n)=> `هنكرر ${n} صنف من يوم ${d}. متأكد؟`,
     badgesTitle:'الإنجازات', badgeStreak7:'أسبوع كامل 🔥', badgeStreak30:'شهر كامل 🏆', badgeWeightLoss:'إنجاز في الوزن ⚖️',
@@ -858,6 +882,8 @@ const T = {
     aiFallback:'مفهمتش قصدك بالظبط 🤔 جرب تقولي مثلاً "أكلت 150 جرام أرز و100 جرام فراخ" أو اسألني "إزاي أسجل مياه؟" أو "اقترح وصفة"',
     aiRecipeIntro:'جرب الوصفة دي:',
     aiHelpOpenBtn:'افتحلي القسم ده',
+    aiGreetingReply:'أهلاً بيك! 👋 قوللي عايز إيه — وصفة، تسجيل وجبة، أو سؤال عن الموقع.',
+    aiCreatorReply:'تم تصميمي بواسطة',
     aiWalk1:'أهلاً بيك في الجماوية! 👋 خليني أوريك بسرعة كل حاجة في الموقع.',
     aiWalk2:'فوق: دائرة السعرات وبار البروتين/الكارب/الدهون بتتحدث أول ما تضيف وجبة. تحتها سجل الوجبات — دور على الأكلة أو قوللي هنا في الشات "أكلت 200 جرام أرز وفرخة" وأنا أحسبهالك وأضيفها.',
     aiWalk3:'زرار "+ ضيف أكلة مش موجودة" في سجل الوجبات يخليك تضيف أكلة جديدة بنفسك، أو قوللي أنا مكوناتها وأنا أحسبها وأضيفها في القائمة بزرار منفصل.',
@@ -918,7 +944,7 @@ const T = {
     shareBtn:'📤 Share your day',
     waterTitle:'Water', waterCups:'cups', waterGoalReached:'Goal reached 💧',
     measureTitle:'Body measurements', measureSub:'Waist / Chest / Arm (cm)',
-    measureWaist:'Waist', measureChest:'Chest', measureArm:'Arm', measureEmpty:'No measurements logged yet',
+    measureWaist:'Waist', measureChest:'Chest', measureArm:'Arm', measureHip:'Hip', measureEmpty:'No measurements logged yet',
     workoutTitle:'Workout log', workoutName:'Exercise name', workoutSets:'Sets', workoutReps:'Reps',
     workoutAdd:'Add exercise', workoutEmpty:'No exercises logged today',
     workoutSetsRepsLabel:(s,r)=> `${s} × ${r}`,
@@ -931,6 +957,13 @@ const T = {
     storeCatAll:'All', storeCatBrand:'Gemaweya', storeCatMeals:'Diet meals', storeCatClothes:'Gym wear',
     storeOrderBtn:'Order on WhatsApp', storeOrderMsg:(name)=> `I'd like to order: ${name}`,
     editGramsHint:'Tap to edit grams', editGramsPrompt:'New grams:',
+    addNoteHint:'Add a note', addNotePrompt:'Note for this meal:',
+    bodyFatTitle:'Estimated body fat %', bodyFatNeck:'Neck (cm)', bodyFatCalc:'Calculate', bodyFatResult:(pct)=> `Estimated body fat: ${pct}%`,
+    bodyFatNeedData:'Enter neck, waist, height and gender first',
+    weekChartTitle:'Last 7 days', inviteBtn:'📨 Invite a friend', inviteMsg:'Try Gemaweya with me to track your food and workouts 💪',
+    inviteCopied:'Link copied ✅',
+    nudgeOver:"You're clearly over your target today — no worries, tomorrow's a new day 🙂",
+    nudgeUnder:"You still have a lot of calories left toward your target — don't forget to eat enough 🍽️",
     repeatYesterdayBtn:'🔁 Repeat last day', repeatYesterdayEmpty:'No past day with logged meals',
     repeatYesterdayConfirm:(d,n)=> `We'll repeat ${n} items from ${d}. Continue?`,
     badgesTitle:'Achievements', badgeStreak7:'Full week 🔥', badgeStreak30:'Full month 🏆', badgeWeightLoss:'Weight milestone ⚖️',
@@ -949,6 +982,8 @@ const T = {
     aiFallback:'Not sure what you mean 🤔 try something like "I ate 150g rice and 100g chicken" or ask "how do I log water?" or "suggest a recipe"',
     aiRecipeIntro:'Try this recipe:',
     aiHelpOpenBtn:'Open this section',
+    aiGreetingReply:'Hey there! 👋 Tell me what you need — a recipe, logging a meal, or a question about the site.',
+    aiCreatorReply:'I was designed by',
     aiWalk1:'Welcome to Gemaweya! 👋 Let me walk you through the site quickly.',
     aiWalk2:'Up top: your calorie ring and protein/carb/fat bars update as you log meals. Below it is the meal log — search for a food, or just tell me here "I ate 200g rice and chicken" and I\'ll calculate and add it.',
     aiWalk3:'The "+ Add a food not listed" button in the meal log lets you add a new food yourself, or tell me its ingredients and I\'ll calculate it and add it to the list with a separate button.',
@@ -1162,6 +1197,31 @@ const FOODS = [
   {ar:'شاي أخضر', en:'Green tea', cal:1, p:0, c:0.2, f:0, cat:'drinks'},
   {ar:'ميلو (مشروب شوكولاتة)', en:'Milo chocolate drink', cal:75, p:2, c:13, f:1.5, cat:'drinks'},
   {ar:'موخيتو بدون كحول', en:'Virgin mojito', cal:50, p:0.1, c:13, f:0, cat:'drinks'},
+  {ar:'شويبس', en:'Schweppes', cal:40, p:0, c:10, f:0, cat:'drinks'},
+  {ar:'كريتينج (مشروب طاقة)', en:'Creating energy drink', cal:46, p:0, c:11.5, f:0, cat:'drinks'},
+  {ar:'باور هورس', en:'Power Horse energy drink', cal:47, p:0, c:11.8, f:0, cat:'drinks'},
+  {ar:'فيروسبيرت (مشروب طاقة)', en:'Fero Spirit energy drink', cal:46, p:0, c:11, f:0, cat:'drinks'},
+  {ar:'بيبسي دايت', en:'Diet Pepsi', cal:0.2, p:0, c:0, f:0, cat:'drinks'},
+  {ar:'كوكاكولا زيرو', en:'Coca-Cola Zero', cal:0.3, p:0, c:0, f:0, cat:'drinks'},
+  {ar:'شاي بالحليب', en:'Milk tea', cal:40, p:1.5, c:6, f:1, cat:'drinks'},
+  {ar:'قهوة تركي', en:'Turkish coffee', cal:5, p:0.2, c:1, f:0, cat:'drinks'},
+  {ar:'قهوة أمريكانو', en:'Americano coffee', cal:5, p:0.3, c:1, f:0, cat:'drinks'},
+  {ar:'فرابيه', en:'Frappe', cal:110, p:2, c:18, f:4, cat:'drinks'},
+  {ar:'موهيتو فراولة', en:'Strawberry mojito (non-alcoholic)', cal:55, p:0.2, c:14, f:0, cat:'drinks'},
+  {ar:'عصير مانجو فريش', en:'Fresh mango juice', cal:60, p:0.6, c:15, f:0.3, cat:'drinks'},
+  {ar:'عصير فراولة فريش', en:'Fresh strawberry juice', cal:35, p:0.5, c:8, f:0.2, cat:'drinks'},
+  {ar:'عصير جوافة فريش', en:'Fresh guava juice', cal:55, p:0.8, c:13, f:0.4, cat:'drinks'},
+  {ar:'عصير أفوكادو بالحليب', en:'Avocado milk juice', cal:120, p:2, c:11, f:8, cat:'drinks'},
+  {ar:'عصير موز بالحليب', en:'Banana milk juice', cal:85, p:2.5, c:15, f:1.8, cat:'drinks'},
+  {ar:'زبادي مشروب (يوجهرت درينك)', en:'Drinkable yogurt', cal:65, p:2.8, c:10, f:1.5, cat:'drinks'},
+  {ar:'لبن رائب', en:'Buttermilk (laban rayeb)', cal:40, p:3.3, c:4.8, f:1, cat:'drinks'},
+  {ar:'سحلب', en:'Sahlab drink', cal:120, p:3, c:20, f:3, cat:'drinks'},
+  {ar:'يانسون', en:'Anise tea', cal:2, p:0, c:0.5, f:0, cat:'drinks'},
+  {ar:'حلبة', en:'Fenugreek tea', cal:10, p:0.5, c:2, f:0.1, cat:'drinks'},
+  {ar:'جينسنج (مشروب)', en:'Ginseng drink', cal:15, p:0, c:4, f:0, cat:'drinks'},
+  {ar:'موز بالفراولة (سموذي)', en:'Banana strawberry smoothie', cal:75, p:1.2, c:17, f:0.4, cat:'drinks'},
+  {ar:'أفوكادو سموذي', en:'Avocado smoothie', cal:130, p:2, c:12, f:9, cat:'drinks'},
+  {ar:'مياه ليمون بالشيا', en:'Chia lemon water', cal:25, p:0.8, c:4, f:0.8, cat:'drinks'},
   // More protein
   {ar:'ديك رومي مفروم', en:'Ground turkey', cal:189, p:20, c:0, f:12, cat:'protein'},
   {ar:'لحمة مفرومة (15% دهن)', en:'Ground beef (15% fat)', cal:250, p:17, c:0, f:20, cat:'protein'},
@@ -1258,6 +1318,33 @@ const FOODS = [
   {ar:'كيك تويست إسفنجي', en:'Twinkie-style sponge cake', cal:380, p:4, c:55, f:16, cat:'snacks'},
   {ar:'بريتزل', en:'Pretzels', cal:380, p:10, c:79, f:2.6, cat:'snacks'},
   {ar:'شيتوز', en:'Cheetos', cal:540, p:6, c:57, f:33, cat:'snacks'},
+  {ar:'ليز شيبس', en:'Lay\'s chips', cal:536, p:6, c:53, f:34, cat:'snacks'},
+  {ar:'برينجلز', en:'Pringles', cal:536, p:4, c:53, f:34, cat:'snacks'},
+  {ar:'شيبسي إستيك', en:'Chipsy Steak flavor', cal:540, p:6, c:54, f:34, cat:'snacks'},
+  {ar:'كورن فليكس شوكولاتة', en:'Chocolate corn flakes', cal:380, p:5, c:84, f:2, cat:'snacks'},
+  {ar:'موماز (فول سوداني مغطى)', en:'Coated peanuts (Momos-style)', cal:480, p:15, c:55, f:22, cat:'snacks'},
+  {ar:'كيك أبولو', en:'Apollo-style cake snack', cal:390, p:5, c:52, f:18, cat:'snacks'},
+  {ar:'وافل عسل', en:'Honey waffle bar', cal:470, p:5, c:58, f:24, cat:'snacks'},
+  {ar:'توفي كراميل', en:'Toffee caramel candy', cal:430, p:2, c:70, f:16, cat:'snacks'},
+  {ar:'حلاوة مولد', en:'Moulid sesame sweets', cal:480, p:8, c:60, f:22, cat:'snacks'},
+  {ar:'سكاكر (حلوى صلبة)', en:'Hard candy', cal:390, p:0, c:98, f:0, cat:'snacks'},
+  {ar:'مارشميلو', en:'Marshmallows', cal:318, p:1.8, c:81, f:0.2, cat:'snacks'},
+  {ar:'جيلي (حلوى مطاطية)', en:'Gummy candy', cal:325, p:3, c:77, f:0.2, cat:'snacks'},
+  {ar:'علكة (لبان)', en:'Chewing gum', cal:270, p:0, c:97, f:0, cat:'snacks'},
+  {ar:'بسكويت زلابية', en:'Zalabya biscuit', cal:450, p:6, c:64, f:19, cat:'snacks'},
+  {ar:'كوايكر شوفان فوري بالعسل', en:'Instant honey oats sachet', cal:390, p:9, c:70, f:8, cat:'snacks'},
+  {ar:'بروتين بار', en:'Protein bar', cal:380, p:30, c:38, f:12, cat:'snacks'},
+  {ar:'جرانولا بار', en:'Granola bar', cal:420, p:8, c:64, f:15, cat:'snacks'},
+  {ar:'شيبس بطاطا حلوة', en:'Sweet potato chips', cal:480, p:3, c:58, f:27, cat:'snacks'},
+  {ar:'فشار بالكراميل', en:'Caramel popcorn', cal:430, p:3, c:78, f:13, cat:'snacks'},
+  {ar:'لب سوري', en:'Sunflower seeds', cal:584, p:21, c:20, f:51, cat:'snacks'},
+  {ar:'لب أبيض (يقطين)', en:'Pumpkin seeds (roasted salted)', cal:559, p:19, c:15, f:49, cat:'snacks'},
+  {ar:'فستق محمص مملح', en:'Roasted salted pistachios', cal:560, p:20, c:28, f:45, cat:'snacks'},
+  {ar:'كاجو محمص مملح', en:'Roasted salted cashews', cal:553, p:18, c:30, f:44, cat:'snacks'},
+  {ar:'ميكس مكسرات', en:'Mixed nuts', cal:600, p:20, c:20, f:52, cat:'snacks'},
+  {ar:'زبيب', en:'Raisins', cal:299, p:3, c:79, f:0.5, cat:'snacks'},
+  {ar:'تمر محشي', en:'Stuffed dates', cal:340, p:4, c:70, f:6, cat:'snacks'},
+  {ar:'فواكه مجففة مشكلة', en:'Mixed dried fruit', cal:320, p:3, c:75, f:0.5, cat:'snacks'},
 ];
 
 const CATEGORIES = ['all','fav','protein','carbs','dairy','fruit','veg','nuts','fastfood','sweets','snacks','drinks'];
@@ -1362,12 +1449,24 @@ function loadFavorites(){ try{ return JSON.parse(localStorage.getItem('gemaweya_
 function saveFavorites(list){ localStorage.setItem('gemaweya_favorites', JSON.stringify(list)); }
 let FAVORITES = loadFavorites();
 
+function getFoodFrequency(){
+  const all = loadAllLogs();
+  const freq = {};
+  Object.values(all).forEach(items=>{
+    (items||[]).forEach(it=>{ freq[it.foodIdx] = (freq[it.foodIdx]||0) + 1; });
+  });
+  return freq;
+}
 function renderFoodResults(){
   const wrap = document.getElementById('foodResults');
   let list = allFoods().map((f,i)=>({...f, idx:i}));
   if(activeCat==='fav') list = list.filter(f=>FAVORITES.includes(f.idx));
   else if(activeCat!=='all') list = list.filter(f=>f.cat===activeCat);
   if(searchTerm) list = list.filter(f=> f.ar.toLowerCase().includes(searchTerm) || f.en.toLowerCase().includes(searchTerm));
+  else if(activeCat==='all'){
+    const freq = getFoodFrequency();
+    list = list.slice().sort((a,b)=> (freq[b.idx]||0) - (freq[a.idx]||0));
+  }
   if(list.length===0){
     wrap.innerHTML = `<div class="food-results-empty">${T[lang].noResults}</div>`;
     return;
@@ -1521,6 +1620,19 @@ function renderGauge(){
   labelEl.textContent = remaining>=0 ? T[lang].remainLabel : T[lang].overLabel;
   targetEl.textContent = T[lang].targetPrefix + target.calTarget;
   renderMacros();
+  renderGaugeNudge(target, totals);
+}
+function renderGaugeNudge(target, totals){
+  const el = document.getElementById('gaugeNudge');
+  const hour = new Date().getHours();
+  const ratio = totals.cal / target.calTarget;
+  if(ratio >= 1.25){
+    el.textContent = T[lang].nudgeOver;
+  } else if(hour >= 20 && ratio <= 0.5){
+    el.textContent = T[lang].nudgeUnder;
+  } else {
+    el.textContent = '';
+  }
 }
 
 function loadMacroOverride(){ try{ return JSON.parse(localStorage.getItem('gemaweya_macro_override')||'null'); }catch(e){ return null; } }
@@ -1582,17 +1694,31 @@ function renderLog(){
     const food = allFoods()[it.foodIdx];
     const cal = Math.round(food.cal * it.grams/100);
     const mealTag = it.meal ? `${MEAL_ICONS[it.meal]} ` : '';
+    const noteHtml = it.note ? `<div class="log-note">📝 ${it.note}</div>` : '';
     return `<div class="log-item">
       <div>
         <div class="log-name">${mealTag}${lang==='ar'?food.ar:food.en}</div>
         <div class="log-grams num log-grams-edit" data-idx="${idx}" title="${T[lang].editGramsHint}">${it.grams}${lang==='ar'?'غ':'g'} ✎</div>
+        ${noteHtml}
       </div>
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px;">
         <div class="log-cals num">${cal} ${lang==='ar'?'سعرة':'kcal'}</div>
+        <button class="log-note-btn" data-idx="${idx}" title="${T[lang].addNoteHint}">📝</button>
         <button class="log-del" data-idx="${idx}">✕</button>
       </div>
     </div>`;
   }).join('');
+  list.querySelectorAll('.log-note-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      const items = loadLog();
+      const next = prompt(T[lang].addNotePrompt, items[idx].note || '');
+      if(next===null) return;
+      items[idx].note = next.trim();
+      saveLog(items);
+      renderLog();
+    });
+  });
   list.querySelectorAll('.log-del').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const idx = parseInt(btn.getAttribute('data-idx'));
@@ -1759,7 +1885,38 @@ document.getElementById('repeatYesterdayBtn').addEventListener('click', ()=>{
   renderGauge();
 });
 
+function renderWeekChart(){
+  const all = loadAllLogs();
+  const days = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const key = localDateKey(d);
+    const items = all[key] || [];
+    let cal = 0;
+    items.forEach(it=>{
+      const food = allFoods()[it.foodIdx];
+      if(food) cal += Math.round(food.cal * it.grams/100);
+    });
+    days.push({key, cal, label: d.toLocaleDateString(lang==='ar'?'ar-EG':'en-GB', {weekday:'short'})});
+  }
+  const svg = document.getElementById('weekChart');
+  const maxCal = Math.max(...days.map(d=>d.cal), 1);
+  const W=600, H=120, barW=60, gap=20;
+  const bars = days.map((d,i)=>{
+    const h = Math.max(2, (d.cal/maxCal) * (H-24));
+    const x = i*(barW+gap) + gap/2;
+    const y = H-24-h;
+    const isToday = d.key===todayKey();
+    const color = isToday ? 'var(--ember)'.replace('var(--ember)', getComputedStyle(document.documentElement).getPropertyValue('--ember').trim()) : getComputedStyle(document.documentElement).getPropertyValue('--bg-panel-2').trim();
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="${color}" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--line').trim()}"></rect>
+      <text x="${x+barW/2}" y="${H-8}" text-anchor="middle" font-size="10" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}">${d.label}</text>`;
+  }).join('');
+  svg.innerHTML = bars;
+}
+
 function renderHistory(){
+  renderWeekChart();
   const card = document.getElementById('historyCard');
   const all = loadAllLogs();
   const dates = Object.keys(all).filter(d=> all[d] && all[d].length>0 && d!==activeDayKey()).sort().reverse();
@@ -2201,6 +2358,29 @@ function renderMeasurements(){
     return `<div class="mini-row"><span>${m.date}</span><span class="mini-row-meta">${parts.join(' · ')}</span></div>`;
   }).join('');
 }
+
+/* ---------------- Body fat % (US Navy method) ---------------- */
+document.getElementById('calcBodyFatBtn').addEventListener('click', ()=>{
+  const target = loadTarget();
+  const neck = parseFloat(document.getElementById('mNeck').value);
+  const hip = parseFloat(document.getElementById('mHip').value);
+  const measurements = loadMeasurements();
+  const waist = measurements.length ? measurements[measurements.length-1].waist : null;
+  const resultEl = document.getElementById('bodyFatResult');
+  if(!target || !neck || !waist || (target.gender==='female' && !hip)){
+    resultEl.textContent = T[lang].bodyFatNeedData;
+    return;
+  }
+  const heightCm = target.h;
+  let pct;
+  if(target.gender==='male'){
+    pct = 495 / (1.0324 - 0.19077*Math.log10(waist-neck) + 0.15456*Math.log10(heightCm)) - 450;
+  } else {
+    pct = 495 / (1.29579 - 0.35004*Math.log10(waist+hip-neck) + 0.22100*Math.log10(heightCm)) - 450;
+  }
+  pct = Math.max(3, Math.min(60, pct));
+  resultEl.textContent = T[lang].bodyFatResult(pct.toFixed(1));
+});
 
 /* ---------------- Workout log ---------------- */
 function loadWorkoutMap(){ try{ return JSON.parse(localStorage.getItem('gemaweya_workouts')||'{}'); }catch(e){ return {}; } }
@@ -2646,6 +2826,156 @@ const RECIPES = [
   {ar:'تونة سوتيه مع كينوا وسبانخ سوتيه', en:'Stir-fried tuna with quinoa and sauteed spinach', ar_ing:'150غ تونة، 120غ كينوا، سبانخ سوتيه', en_ing:'150g tuna, 120g quinoa, sauteed spinach', cal:356, p:39, c:34, f:8},
   {ar:'ديك رومي بالفرن مع بطاطا حلوة وسبانخ سوتيه', en:'Baked turkey with sweet potato and sauteed spinach', ar_ing:'150غ ديك رومي، 100غ بطاطا حلوة، سبانخ سوتيه', en_ing:'150g turkey, 100g sweet potato, sauteed spinach', cal:412, p:40, c:24, f:18},
   {ar:'بيض بالثوم مع خبز أسمر وسبانخ سوتيه', en:'Garlic eggs with whole wheat bread and sauteed spinach', ar_ing:'120غ بيض، 100غ خبز أسمر، سبانخ سوتيه', en_ing:'120g eggs, 100g whole wheat bread, sauteed spinach', cal:227, p:14, c:33, f:6},
+  {ar:'جمبري بالفلفل الأسود مع خبز أسمر وفلفل ألوان', en:'Black Pepper shrimp with whole wheat bread and bell peppers', ar_ing:'150غ جمبري، 120غ خبز أسمر، فلفل ألوان', en_ing:'150g shrimp, 120g whole wheat bread, bell peppers', cal:422, p:32, c:36, f:17},
+  {ar:'سلمون بالفرن مع شعيرية وفاصوليا خضرا', en:'Baked salmon with vermicelli and green beans', ar_ing:'200غ سلمون، 120غ شعيرية، فاصوليا خضرا', en_ing:'200g salmon, 120g vermicelli, green beans', cal:455, p:37, c:33, f:18},
+  {ar:'ديك رومي سوتيه مع خبز أسمر وفلفل ألوان', en:'Stir-fried turkey with whole wheat bread and bell peppers', ar_ing:'200غ ديك رومي، 120غ خبز أسمر، فلفل ألوان', en_ing:'200g turkey, 120g whole wheat bread, bell peppers', cal:512, p:61, c:34, f:14},
+  {ar:'لحمة بقري قليلة الدهن متبل مع فريك وخس وطماطم', en:'Marinated lean beef with freekeh and lettuce and tomato', ar_ing:'120غ لحمة بقري قليلة الدهن، 150غ فريك، خس وطماطم', en_ing:'120g lean beef, 150g freekeh, lettuce and tomato', cal:385, p:30, c:38, f:14},
+  {ar:'كبدة بقري بالفلفل الأسود مع برغل وفلفل ألوان', en:'Black Pepper beef liver with bulgur and bell peppers', ar_ing:'200غ كبدة بقري، 100غ برغل، فلفل ألوان', en_ing:'200g beef liver, 100g bulgur, bell peppers', cal:384, p:48, c:28, f:8},
+  {ar:'كبدة بقري بالكاري مع عيش بلدي وسبانخ سوتيه', en:'Curry beef liver with baladi bread and sauteed spinach', ar_ing:'150غ كبدة بقري، 100غ عيش بلدي، سبانخ سوتيه', en_ing:'150g beef liver, 100g baladi bread, sauteed spinach', cal:343, p:34, c:28, f:12},
+  {ar:'جمبري سوتيه مع شعيرية وبروكلي مشوي', en:'Stir-fried shrimp with vermicelli and grilled broccoli', ar_ing:'180غ جمبري، 100غ شعيرية، بروكلي مشوي', en_ing:'180g shrimp, 100g vermicelli, grilled broccoli', cal:354, p:40, c:25, f:9},
+  {ar:'صدر فرخ بالأعشاب مع شعيرية وفلفل ألوان', en:'Herb chicken breast with vermicelli and bell peppers', ar_ing:'180غ صدر فرخ، 180غ شعيرية، فلفل ألوان', en_ing:'180g chicken breast, 180g vermicelli, bell peppers', cal:531, p:57, c:43, f:13},
+  {ar:'صدر فرخ سوتيه مع مكرونة وجرجير وطماطم كرزية', en:'Stir-fried chicken breast with pasta and arugula and cherry tomatoes', ar_ing:'200غ صدر فرخ، 100غ مكرونة، جرجير وطماطم كرزية', en_ing:'200g chicken breast, 100g pasta, arugula and cherry tomatoes', cal:378, p:54, c:23, f:8},
+  {ar:'سمك بلطي بالطحينة مع بطاطا حلوة وفاصوليا خضرا', en:'Tahini tilapia with sweet potato and green beans', ar_ing:'200غ سمك بلطي، 120غ بطاطا حلوة، فاصوليا خضرا', en_ing:'200g tilapia, 120g sweet potato, green beans', cal:402, p:53, c:28, f:8},
+  {ar:'لحمة بقري قليلة الدهن مشوي مع برغل وجزر وكوسة', en:'Grilled lean beef with bulgur and carrots and zucchini', ar_ing:'120غ لحمة بقري قليلة الدهن، 150غ برغل، جزر وكوسة', en_ing:'120g lean beef, 150g bulgur, carrots and zucchini', cal:374, p:28, c:39, f:12},
+  {ar:'ديك رومي سوتيه مع برغل وبروكلي مشوي', en:'Stir-fried turkey with bulgur and grilled broccoli', ar_ing:'120غ ديك رومي، 150غ برغل، بروكلي مشوي', en_ing:'120g turkey, 150g bulgur, grilled broccoli', cal:375, p:36, c:39, f:9},
+  {ar:'سمك سالمون مدخن بالفرن مع بطاطا حلوة وجزر وكوسة', en:'Baked smoked salmon with sweet potato and carrots and zucchini', ar_ing:'180غ سمك سالمون مدخن، 120غ بطاطا حلوة، جزر وكوسة', en_ing:'180g smoked salmon, 120g sweet potato, carrots and zucchini', cal:358, p:32, c:38, f:9},
+  {ar:'بيض بالأعشاب مع فريك وبروكلي مشوي', en:'Herb eggs with freekeh and grilled broccoli', ar_ing:'200غ بيض، 150غ فريك، بروكلي مشوي', en_ing:'200g eggs, 150g freekeh, grilled broccoli', cal:353, p:22, c:39, f:11},
+  {ar:'كبدة بقري بالليمون مع برغل وسبانخ سوتيه', en:'Lemon beef liver with bulgur and sauteed spinach', ar_ing:'200غ كبدة بقري، 150غ برغل، سبانخ سوتيه', en_ing:'200g beef liver, 150g bulgur, sauteed spinach', cal:434, p:48, c:44, f:8},
+  {ar:'جمبري بالفلفل الأسود مع شعيرية وجرجير وطماطم كرزية', en:'Black Pepper shrimp with vermicelli and arugula and cherry tomatoes', ar_ing:'200غ جمبري، 120غ شعيرية، جرجير وطماطم كرزية', en_ing:'200g shrimp, 120g vermicelli, arugula and cherry tomatoes', cal:384, p:44, c:37, f:6},
+  {ar:'ديك رومي بالثوم مع جريش وجزر وكوسة', en:'Garlic turkey with jareesh and carrots and zucchini', ar_ing:'150غ ديك رومي، 150غ جريش، جزر وكوسة', en_ing:'150g turkey, 150g jareesh, carrots and zucchini', cal:439, p:44, c:46, f:9},
+  {ar:'ديك رومي مشوي مع شعيرية وخيار وطماطم', en:'Grilled turkey with vermicelli and cucumber and tomato', ar_ing:'120غ ديك رومي، 120غ شعيرية، خيار وطماطم', en_ing:'120g turkey, 120g vermicelli, cucumber and tomato', cal:399, p:31, c:33, f:17},
+  {ar:'سلمون بالليمون مع فريك وفلفل ألوان', en:'Lemon salmon with freekeh and bell peppers', ar_ing:'200غ سلمون، 180غ فريك، فلفل ألوان', en_ing:'200g salmon, 180g freekeh, bell peppers', cal:526, p:38, c:52, f:18},
+  {ar:'بيض بالفرن مع بطاطا حلوة وسلطة خضار', en:'Baked eggs with sweet potato and vegetable salad', ar_ing:'180غ بيض، 100غ بطاطا حلوة، سلطة خضار', en_ing:'180g eggs, 100g sweet potato, vegetable salad', cal:314, p:23, c:34, f:10},
+  {ar:'سلمون بالفلفل الأسود مع شعيرية وجرجير وطماطم كرزية', en:'Black Pepper salmon with vermicelli and arugula and cherry tomatoes', ar_ing:'180غ سلمون، 120غ شعيرية، جرجير وطماطم كرزية', en_ing:'180g salmon, 120g vermicelli, arugula and cherry tomatoes', cal:422, p:36, c:40, f:12},
+  {ar:'سمك بلطي بالطحينة مع كينوا وقرنبيط مشوي', en:'Tahini tilapia with quinoa and grilled cauliflower', ar_ing:'150غ سمك بلطي، 120غ كينوا، قرنبيط مشوي', en_ing:'150g tilapia, 120g quinoa, grilled cauliflower', cal:470, p:40, c:40, f:17},
+  {ar:'جمبري بالطحينة مع برغل وسبانخ سوتيه', en:'Tahini shrimp with bulgur and sauteed spinach', ar_ing:'180غ جمبري، 120غ برغل، سبانخ سوتيه', en_ing:'180g shrimp, 120g bulgur, sauteed spinach', cal:398, p:39, c:36, f:12},
+  {ar:'كبدة بقري سوتيه مع عيش بلدي وقرنبيط مشوي', en:'Stir-fried beef liver with baladi bread and grilled cauliflower', ar_ing:'120غ كبدة بقري، 120غ عيش بلدي، قرنبيط مشوي', en_ing:'120g beef liver, 120g baladi bread, grilled cauliflower', cal:365, p:33, c:31, f:11},
+  {ar:'كبدة بقري مشوي مع أرز بني وخس وطماطم', en:'Grilled beef liver with brown rice and lettuce and tomato', ar_ing:'180غ كبدة بقري، 100غ أرز بني، خس وطماطم', en_ing:'180g beef liver, 100g brown rice, lettuce and tomato', cal:359, p:45, c:26, f:8},
+  {ar:'صدر فرخ مشوي مع خبز أسمر وسلطة خضار', en:'Grilled chicken breast with whole wheat bread and vegetable salad', ar_ing:'180غ صدر فرخ، 120غ خبز أسمر، سلطة خضار', en_ing:'180g chicken breast, 120g whole wheat bread, vegetable salad', cal:401, p:54, c:31, f:6},
+  {ar:'جمبري بالفرن مع بطاطا حلوة وفلفل ألوان', en:'Baked shrimp with sweet potato and bell peppers', ar_ing:'200غ جمبري، 120غ بطاطا حلوة، فلفل ألوان', en_ing:'200g shrimp, 120g sweet potato, bell peppers', cal:440, p:43, c:32, f:14},
+  {ar:'تونة بالطحينة مع برغل وسبانخ سوتيه', en:'Tahini tuna with bulgur and sauteed spinach', ar_ing:'120غ تونة، 100غ برغل، سبانخ سوتيه', en_ing:'120g tuna, 100g bulgur, sauteed spinach', cal:357, p:31, c:30, f:14},
+  {ar:'صدر فرخ سوتيه مع برغل وخيار وطماطم', en:'Stir-fried chicken breast with bulgur and cucumber and tomato', ar_ing:'180غ صدر فرخ، 120غ برغل، خيار وطماطم', en_ing:'180g chicken breast, 120g bulgur, cucumber and tomato', cal:435, p:54, c:38, f:8},
+  {ar:'صدر فرخ بالثوم مع بطاطس وخيار وطماطم', en:'Garlic chicken breast with potato and cucumber and tomato', ar_ing:'180غ صدر فرخ، 120غ بطاطس، خيار وطماطم', en_ing:'180g chicken breast, 120g potato, cucumber and tomato', cal:482, p:56, c:31, f:14},
+  {ar:'صدر فرخ بالفرن مع بطاطا حلوة وخيار وطماطم', en:'Baked chicken breast with sweet potato and cucumber and tomato', ar_ing:'150غ صدر فرخ، 180غ بطاطا حلوة، خيار وطماطم', en_ing:'150g chicken breast, 180g sweet potato, cucumber and tomato', cal:453, p:46, c:46, f:8},
+  {ar:'سمك بلطي بالليمون مع فريك وخس وطماطم', en:'Lemon tilapia with freekeh and lettuce and tomato', ar_ing:'180غ سمك بلطي، 100غ فريك، خس وطماطم', en_ing:'180g tilapia, 100g freekeh, lettuce and tomato', cal:355, p:45, c:22, f:8},
+  {ar:'صدر فرخ بالليمون مع كينوا وفاصوليا خضرا', en:'Lemon chicken breast with quinoa and green beans', ar_ing:'180غ صدر فرخ، 100غ كينوا، فاصوليا خضرا', en_ing:'180g chicken breast, 100g quinoa, green beans', cal:417, p:53, c:29, f:11},
+  {ar:'لحمة ضاني بالطحينة مع شعيرية وخس وطماطم', en:'Tahini lamb with vermicelli and lettuce and tomato', ar_ing:'180غ لحمة ضاني، 100غ شعيرية، خس وطماطم', en_ing:'180g lamb, 100g vermicelli, lettuce and tomato', cal:383, p:42, c:25, f:14},
+  {ar:'فيليه بقري بالليمون مع شعيرية وسلطة خضار', en:'Lemon beef fillet with vermicelli and vegetable salad', ar_ing:'200غ فيليه بقري، 180غ شعيرية، سلطة خضار', en_ing:'200g beef fillet, 180g vermicelli, vegetable salad', cal:489, p:51, c:53, f:8},
+  {ar:'جمبري بالثوم مع أرز أبيض وفلفل ألوان', en:'Garlic shrimp with white rice and bell peppers', ar_ing:'180غ جمبري، 120غ أرز أبيض، فلفل ألوان', en_ing:'180g shrimp, 120g white rice, bell peppers', cal:430, p:44, c:26, f:15},
+  {ar:'صدر فرخ سوتيه مع بطاطا حلوة وسبانخ سوتيه', en:'Stir-fried chicken breast with sweet potato and sauteed spinach', ar_ing:'180غ صدر فرخ، 100غ بطاطا حلوة، سبانخ سوتيه', en_ing:'180g chicken breast, 100g sweet potato, sauteed spinach', cal:504, p:58, c:28, f:18},
+  {ar:'سمك بلطي بالكاري مع أرز أبيض وسلطة خضار', en:'Curry tilapia with white rice and vegetable salad', ar_ing:'200غ سمك بلطي، 180غ أرز أبيض، سلطة خضار', en_ing:'200g tilapia, 180g white rice, vegetable salad', cal:469, p:45, c:48, f:12},
+  {ar:'كبدة بقري بالطحينة مع عيش بلدي وبروكلي مشوي', en:'Tahini beef liver with baladi bread and grilled broccoli', ar_ing:'150غ كبدة بقري، 120غ عيش بلدي، بروكلي مشوي', en_ing:'150g beef liver, 120g baladi bread, grilled broccoli', cal:357, p:39, c:35, f:7},
+  {ar:'لحمة ضاني سوتيه مع بطاطا حلوة وسبانخ سوتيه', en:'Stir-fried lamb with sweet potato and sauteed spinach', ar_ing:'200غ لحمة ضاني، 120غ بطاطا حلوة، سبانخ سوتيه', en_ing:'200g lamb, 120g sweet potato, sauteed spinach', cal:457, p:44, c:34, f:16},
+  {ar:'سمك سالمون مدخن بالفرن مع برغل وفاصوليا خضرا', en:'Baked smoked salmon with bulgur and green beans', ar_ing:'150غ سمك سالمون مدخن، 120غ برغل، فاصوليا خضرا', en_ing:'150g smoked salmon, 120g bulgur, green beans', cal:357, p:26, c:36, f:12},
+  {ar:'سلمون بالليمون مع أرز بني وفلفل ألوان', en:'Lemon salmon with brown rice and bell peppers', ar_ing:'180غ سلمون، 150غ أرز بني، فلفل ألوان', en_ing:'180g salmon, 150g brown rice, bell peppers', cal:349, p:34, c:36, f:6},
+  {ar:'صدر فرخ بالطحينة مع خبز أسمر وسلطة خضار', en:'Tahini chicken breast with whole wheat bread and vegetable salad', ar_ing:'150غ صدر فرخ، 100غ خبز أسمر، سلطة خضار', en_ing:'150g chicken breast, 100g whole wheat bread, vegetable salad', cal:371, p:46, c:28, f:10},
+  {ar:'لحمة ضاني بالثوم مع برغل وجزر وكوسة', en:'Garlic lamb with bulgur and carrots and zucchini', ar_ing:'180غ لحمة ضاني، 100غ برغل، جزر وكوسة', en_ing:'180g lamb, 100g bulgur, carrots and zucchini', cal:371, p:40, c:30, f:10},
+  {ar:'بيض مشوي مع بطاطا حلوة وقرنبيط مشوي', en:'Grilled eggs with sweet potato and grilled cauliflower', ar_ing:'120غ بيض، 150غ بطاطا حلوة، قرنبيط مشوي', en_ing:'120g eggs, 150g sweet potato, grilled cauliflower', cal:274, p:14, c:42, f:6},
+  {ar:'ديك رومي بالكاري مع خبز أسمر وفلفل ألوان', en:'Curry turkey with whole wheat bread and bell peppers', ar_ing:'150غ ديك رومي، 100غ خبز أسمر، فلفل ألوان', en_ing:'150g turkey, 100g whole wheat bread, bell peppers', cal:351, p:38, c:24, f:11},
+  {ar:'بيض متبل مع أرز بني وسلطة خضار', en:'Marinated eggs with brown rice and vegetable salad', ar_ing:'120غ بيض، 180غ أرز بني، سلطة خضار', en_ing:'120g eggs, 180g brown rice, vegetable salad', cal:379, p:14, c:56, f:11},
+  {ar:'جمبري بالكاري مع برغل وخيار وطماطم', en:'Curry shrimp with bulgur and cucumber and tomato', ar_ing:'180غ جمبري، 150غ برغل، خيار وطماطم', en_ing:'180g shrimp, 150g bulgur, cucumber and tomato', cal:466, p:43, c:44, f:14},
+  {ar:'لحمة بقري قليلة الدهن بالليمون مع أرز أبيض وفلفل ألوان', en:'Lemon lean beef with white rice and bell peppers', ar_ing:'180غ لحمة بقري قليلة الدهن، 100غ أرز أبيض، فلفل ألوان', en_ing:'180g lean beef, 100g white rice, bell peppers', cal:352, p:42, c:28, f:9},
+  {ar:'كبدة بقري بالكاري مع شعيرية وقرنبيط مشوي', en:'Curry beef liver with vermicelli and grilled cauliflower', ar_ing:'120غ كبدة بقري، 150غ شعيرية، قرنبيط مشوي', en_ing:'120g beef liver, 150g vermicelli, grilled cauliflower', cal:320, p:27, c:41, f:6},
+  {ar:'كبدة بقري متبل مع جريش وقرنبيط مشوي', en:'Marinated beef liver with jareesh and grilled cauliflower', ar_ing:'180غ كبدة بقري، 120غ جريش، قرنبيط مشوي', en_ing:'180g beef liver, 120g jareesh, grilled cauliflower', cal:391, p:45, c:31, f:10},
+  {ar:'تونة بالليمون مع أرز بني وجرجير وطماطم كرزية', en:'Lemon tuna with brown rice and arugula and cherry tomatoes', ar_ing:'200غ تونة، 180غ أرز بني، جرجير وطماطم كرزية', en_ing:'200g tuna, 180g brown rice, arugula and cherry tomatoes', cal:436, p:48, c:51, f:6},
+  {ar:'سمك سالمون مدخن بالفلفل الأسود مع شعيرية وجرجير وطماطم كرزية', en:'Black Pepper smoked salmon with vermicelli and arugula and cherry tomatoes', ar_ing:'120غ سمك سالمون مدخن، 100غ شعيرية، جرجير وطماطم كرزية', en_ing:'120g smoked salmon, 100g vermicelli, arugula and cherry tomatoes', cal:325, p:19, c:25, f:16},
+  {ar:'لحمة بقري قليلة الدهن بالليمون مع أرز أبيض وخيار وطماطم', en:'Lemon lean beef with white rice and cucumber and tomato', ar_ing:'150غ لحمة بقري قليلة الدهن، 120غ أرز أبيض، خيار وطماطم', en_ing:'150g lean beef, 120g white rice, cucumber and tomato', cal:447, p:40, c:34, f:17},
+  {ar:'لحمة بقري قليلة الدهن متبل مع كينوا وسبانخ سوتيه', en:'Marinated lean beef with quinoa and sauteed spinach', ar_ing:'200غ لحمة بقري قليلة الدهن، 100غ كينوا، سبانخ سوتيه', en_ing:'200g lean beef, 100g quinoa, sauteed spinach', cal:410, p:45, c:32, f:10},
+  {ar:'فيليه بقري بالفرن مع مكرونة وجزر وكوسة', en:'Baked beef fillet with pasta and carrots and zucchini', ar_ing:'120غ فيليه بقري، 100غ مكرونة، جزر وكوسة', en_ing:'120g beef fillet, 100g pasta, carrots and zucchini', cal:359, p:29, c:27, f:15},
+  {ar:'تونة بالأعشاب مع برغل وجزر وكوسة', en:'Herb tuna with bulgur and carrots and zucchini', ar_ing:'180غ تونة، 150غ برغل، جزر وكوسة', en_ing:'180g tuna, 150g bulgur, carrots and zucchini', cal:412, p:46, c:38, f:9},
+  {ar:'سلمون بالثوم مع مكرونة وفاصوليا خضرا', en:'Garlic salmon with pasta and green beans', ar_ing:'180غ سلمون، 100غ مكرونة، فاصوليا خضرا', en_ing:'180g salmon, 100g pasta, green beans', cal:352, p:32, c:26, f:15},
+  {ar:'ديك رومي بالفلفل الأسود مع جريش وخيار وطماطم', en:'Black Pepper turkey with jareesh and cucumber and tomato', ar_ing:'120غ ديك رومي، 100غ جريش، خيار وطماطم', en_ing:'120g turkey, 100g jareesh, cucumber and tomato', cal:284, p:34, c:25, f:7},
+  {ar:'تونة بالليمون مع أرز بني وفلفل ألوان', en:'Lemon tuna with brown rice and bell peppers', ar_ing:'150غ تونة، 100غ أرز بني، فلفل ألوان', en_ing:'150g tuna, 100g brown rice, bell peppers', cal:323, p:34, c:26, f:8},
+  {ar:'سلمون بالفرن مع شعيرية وفلفل ألوان', en:'Baked salmon with vermicelli and bell peppers', ar_ing:'120غ سلمون، 150غ شعيرية، فلفل ألوان', en_ing:'120g salmon, 150g vermicelli, bell peppers', cal:367, p:21, c:45, f:12},
+  {ar:'سلمون بالليمون مع أرز أبيض وقرنبيط مشوي', en:'Lemon salmon with white rice and grilled cauliflower', ar_ing:'200غ سلمون، 150غ أرز أبيض، قرنبيط مشوي', en_ing:'200g salmon, 150g white rice, grilled cauliflower', cal:398, p:36, c:37, f:11},
+  {ar:'سلمون بالثوم مع شعيرية وفلفل ألوان', en:'Garlic salmon with vermicelli and bell peppers', ar_ing:'200غ سلمون، 180غ شعيرية، فلفل ألوان', en_ing:'200g salmon, 180g vermicelli, bell peppers', cal:448, p:42, c:50, f:8},
+  {ar:'سلمون مشوي مع برغل وجزر وكوسة', en:'Grilled salmon with bulgur and carrots and zucchini', ar_ing:'120غ سلمون، 150غ برغل، جزر وكوسة', en_ing:'120g salmon, 150g bulgur, carrots and zucchini', cal:353, p:21, c:37, f:14},
+  {ar:'سمك سالمون مدخن بالطحينة مع برغل وجزر وكوسة', en:'Tahini smoked salmon with bulgur and carrots and zucchini', ar_ing:'150غ سمك سالمون مدخن، 150غ برغل، جزر وكوسة', en_ing:'150g smoked salmon, 150g bulgur, carrots and zucchini', cal:431, p:27, c:42, f:17},
+  {ar:'بيض متبل مع أرز أبيض وخس وطماطم', en:'Marinated eggs with white rice and lettuce and tomato', ar_ing:'150غ بيض، 120غ أرز أبيض، خس وطماطم', en_ing:'150g eggs, 120g white rice, lettuce and tomato', cal:314, p:17, c:35, f:12},
+  {ar:'سلمون بالطحينة مع برغل وخيار وطماطم', en:'Tahini salmon with bulgur and cucumber and tomato', ar_ing:'200غ سلمون، 150غ برغل، خيار وطماطم', en_ing:'200g salmon, 150g bulgur, cucumber and tomato', cal:339, p:35, c:35, f:8},
+  {ar:'بيض مشوي مع شعيرية وبروكلي مشوي', en:'Grilled eggs with vermicelli and grilled broccoli', ar_ing:'180غ بيض، 180غ شعيرية، بروكلي مشوي', en_ing:'180g eggs, 180g vermicelli, grilled broccoli', cal:385, p:21, c:40, f:15},
+  {ar:'بيض سوتيه مع كينوا وخيار وطماطم', en:'Stir-fried eggs with quinoa and cucumber and tomato', ar_ing:'150غ بيض، 120غ كينوا، خيار وطماطم', en_ing:'150g eggs, 120g quinoa, cucumber and tomato', cal:331, p:18, c:33, f:14},
+  {ar:'سلمون بالثوم مع كينوا وسبانخ سوتيه', en:'Garlic salmon with quinoa and sauteed spinach', ar_ing:'200غ سلمون، 120غ كينوا، سبانخ سوتيه', en_ing:'200g salmon, 120g quinoa, sauteed spinach', cal:350, p:36, c:33, f:7},
+  {ar:'ديك رومي بالثوم مع أرز أبيض وقرنبيط مشوي', en:'Garlic turkey with white rice and grilled cauliflower', ar_ing:'200غ ديك رومي، 100غ أرز أبيض، قرنبيط مشوي', en_ing:'200g turkey, 100g white rice, grilled cauliflower', cal:383, p:57, c:28, f:6},
+  {ar:'كبدة بقري بالكاري مع أرز بني وخس وطماطم', en:'Curry beef liver with brown rice and lettuce and tomato', ar_ing:'150غ كبدة بقري، 150غ أرز بني، خس وطماطم', en_ing:'150g beef liver, 150g brown rice, lettuce and tomato', cal:356, p:39, c:38, f:7},
+  {ar:'تونة بالأعشاب مع جريش وسلطة خضار', en:'Herb tuna with jareesh and vegetable salad', ar_ing:'150غ تونة، 180غ جريش، سلطة خضار', en_ing:'150g tuna, 180g jareesh, vegetable salad', cal:483, p:37, c:49, f:17},
+  {ar:'لحمة ضاني متبل مع بطاطا حلوة وسبانخ سوتيه', en:'Marinated lamb with sweet potato and sauteed spinach', ar_ing:'150غ لحمة ضاني، 120غ بطاطا حلوة، سبانخ سوتيه', en_ing:'150g lamb, 120g sweet potato, sauteed spinach', cal:427, p:39, c:40, f:13},
+  {ar:'لحمة ضاني بالليمون مع أرز أبيض وسلطة خضار', en:'Lemon lamb with white rice and vegetable salad', ar_ing:'120غ لحمة ضاني، 100غ أرز أبيض، سلطة خضار', en_ing:'120g lamb, 100g white rice, vegetable salad', cal:398, p:30, c:29, f:18},
+  {ar:'سمك بلطي بالطحينة مع كينوا وجرجير وطماطم كرزية', en:'Tahini tilapia with quinoa and arugula and cherry tomatoes', ar_ing:'150غ سمك بلطي، 100غ كينوا، جرجير وطماطم كرزية', en_ing:'150g tilapia, 100g quinoa, arugula and cherry tomatoes', cal:409, p:39, c:29, f:14},
+  {ar:'تونة بالليمون مع شعيرية وخيار وطماطم', en:'Lemon tuna with vermicelli and cucumber and tomato', ar_ing:'150غ تونة، 150غ شعيرية، خيار وطماطم', en_ing:'150g tuna, 150g vermicelli, cucumber and tomato', cal:408, p:37, c:36, f:12},
+  {ar:'بيض بالأعشاب مع عيش بلدي وجزر وكوسة', en:'Herb eggs with baladi bread and carrots and zucchini', ar_ing:'120غ بيض، 120غ عيش بلدي، جزر وكوسة', en_ing:'120g eggs, 120g baladi bread, carrots and zucchini', cal:243, p:16, c:27, f:9},
+  {ar:'سمك سالمون مدخن سوتيه مع جريش وسلطة خضار', en:'Stir-fried smoked salmon with jareesh and vegetable salad', ar_ing:'150غ سمك سالمون مدخن، 150غ جريش، سلطة خضار', en_ing:'150g smoked salmon, 150g jareesh, vegetable salad', cal:337, p:24, c:39, f:8},
+  {ar:'بيض مشوي مع بطاطس وسبانخ سوتيه', en:'Grilled eggs with potato and sauteed spinach', ar_ing:'150غ بيض، 180غ بطاطس، سبانخ سوتيه', en_ing:'150g eggs, 180g potato, sauteed spinach', cal:419, p:18, c:52, f:16},
+  {ar:'فيليه بقري بالطحينة مع شعيرية وسبانخ سوتيه', en:'Tahini beef fillet with vermicelli and sauteed spinach', ar_ing:'150غ فيليه بقري، 100غ شعيرية، سبانخ سوتيه', en_ing:'150g beef fillet, 100g vermicelli, sauteed spinach', cal:362, p:39, c:31, f:8},
+  {ar:'كبدة بقري بالفرن مع بطاطا حلوة وفاصوليا خضرا', en:'Baked beef liver with sweet potato and green beans', ar_ing:'200غ كبدة بقري، 150غ بطاطا حلوة، فاصوليا خضرا', en_ing:'200g beef liver, 150g sweet potato, green beans', cal:456, p:52, c:40, f:9},
+  {ar:'لحمة بقري قليلة الدهن بالثوم مع أرز بني وفلفل ألوان', en:'Garlic lean beef with brown rice and bell peppers', ar_ing:'200غ لحمة بقري قليلة الدهن، 120غ أرز بني، فلفل ألوان', en_ing:'200g lean beef, 120g brown rice, bell peppers', cal:438, p:54, c:34, f:11},
+  {ar:'سمك بلطي بالفرن مع أرز أبيض وسلطة خضار', en:'Baked tilapia with white rice and vegetable salad', ar_ing:'200غ سمك بلطي، 180غ أرز أبيض، سلطة خضار', en_ing:'200g tilapia, 180g white rice, vegetable salad', cal:508, p:46, c:56, f:11},
+  {ar:'صدر فرخ متبل مع مكرونة وفاصوليا خضرا', en:'Marinated chicken breast with pasta and green beans', ar_ing:'200غ صدر فرخ، 150غ مكرونة، فاصوليا خضرا', en_ing:'200g chicken breast, 150g pasta, green beans', cal:488, p:56, c:48, f:8},
+  {ar:'لحمة ضاني بالأعشاب مع بطاطس وسبانخ سوتيه', en:'Herb lamb with potato and sauteed spinach', ar_ing:'200غ لحمة ضاني، 180غ بطاطس، سبانخ سوتيه', en_ing:'200g lamb, 180g potato, sauteed spinach', cal:519, p:44, c:51, f:15},
+  {ar:'بيض بالفلفل الأسود مع برغل وقرنبيط مشوي', en:'Black Pepper eggs with bulgur and grilled cauliflower', ar_ing:'200غ بيض، 100غ برغل، قرنبيط مشوي', en_ing:'200g eggs, 100g bulgur, grilled cauliflower', cal:352, p:25, c:36, f:13},
+  {ar:'لحمة بقري قليلة الدهن مشوي مع بطاطس وقرنبيط مشوي', en:'Grilled lean beef with potato and grilled cauliflower', ar_ing:'200غ لحمة بقري قليلة الدهن، 180غ بطاطس، قرنبيط مشوي', en_ing:'200g lean beef, 180g potato, grilled cauliflower', cal:520, p:53, c:41, f:17},
+  {ar:'سمك بلطي متبل مع أرز بني وفاصوليا خضرا', en:'Marinated tilapia with brown rice and green beans', ar_ing:'120غ سمك بلطي، 100غ أرز بني، فاصوليا خضرا', en_ing:'120g tilapia, 100g brown rice, green beans', cal:314, p:27, c:29, f:9},
+  {ar:'بيض مشوي مع أرز أبيض وخس وطماطم', en:'Grilled eggs with white rice and lettuce and tomato', ar_ing:'120غ بيض، 120غ أرز أبيض، خس وطماطم', en_ing:'120g eggs, 120g white rice, lettuce and tomato', cal:248, p:13, c:31, f:9},
+  {ar:'سلمون بالأعشاب مع أرز أبيض وسبانخ سوتيه', en:'Herb salmon with white rice and sauteed spinach', ar_ing:'180غ سلمون، 180غ أرز أبيض، سبانخ سوتيه', en_ing:'180g salmon, 180g white rice, sauteed spinach', cal:383, p:33, c:44, f:9},
+  {ar:'صدر فرخ بالفرن مع شعيرية وقرنبيط مشوي', en:'Baked chicken breast with vermicelli and grilled cauliflower', ar_ing:'150غ صدر فرخ، 100غ شعيرية، قرنبيط مشوي', en_ing:'150g chicken breast, 100g vermicelli, grilled cauliflower', cal:486, p:47, c:31, f:18},
+  {ar:'جمبري بالطحينة مع كينوا وخس وطماطم', en:'Tahini shrimp with quinoa and lettuce and tomato', ar_ing:'150غ جمبري، 180غ كينوا، خس وطماطم', en_ing:'150g shrimp, 180g quinoa, lettuce and tomato', cal:438, p:33, c:46, f:13},
+  {ar:'كبدة بقري مشوي مع أرز أبيض وقرنبيط مشوي', en:'Grilled beef liver with white rice and grilled cauliflower', ar_ing:'180غ كبدة بقري، 100غ أرز أبيض، قرنبيط مشوي', en_ing:'180g beef liver, 100g white rice, grilled cauliflower', cal:411, p:43, c:31, f:12},
+  {ar:'ديك رومي سوتيه مع جريش وسلطة خضار', en:'Stir-fried turkey with jareesh and vegetable salad', ar_ing:'180غ ديك رومي، 150غ جريش، سلطة خضار', en_ing:'180g turkey, 150g jareesh, vegetable salad', cal:461, p:50, c:37, f:11},
+  {ar:'فيليه بقري سوتيه مع كينوا وخيار وطماطم', en:'Stir-fried beef fillet with quinoa and cucumber and tomato', ar_ing:'150غ فيليه بقري، 150غ كينوا، خيار وطماطم', en_ing:'150g beef fillet, 150g quinoa, cucumber and tomato', cal:409, p:41, c:44, f:7},
+  {ar:'كبدة بقري بالثوم مع أرز بني وبروكلي مشوي', en:'Garlic beef liver with brown rice and grilled broccoli', ar_ing:'120غ كبدة بقري، 150غ أرز بني، بروكلي مشوي', en_ing:'120g beef liver, 150g brown rice, grilled broccoli', cal:327, p:29, c:36, f:9},
+  {ar:'سمك بلطي بالكاري مع برغل وجزر وكوسة', en:'Curry tilapia with bulgur and carrots and zucchini', ar_ing:'200غ سمك بلطي، 120غ برغل، جزر وكوسة', en_ing:'200g tilapia, 120g bulgur, carrots and zucchini', cal:410, p:53, c:27, f:11},
+  {ar:'جمبري سوتيه مع كينوا وقرنبيط مشوي', en:'Stir-fried shrimp with quinoa and grilled cauliflower', ar_ing:'150غ جمبري، 100غ كينوا، قرنبيط مشوي', en_ing:'150g shrimp, 100g quinoa, grilled cauliflower', cal:339, p:35, c:25, f:11},
+  {ar:'سمك بلطي بالليمون مع أرز أبيض وسبانخ سوتيه', en:'Lemon tilapia with white rice and sauteed spinach', ar_ing:'180غ سمك بلطي، 150غ أرز أبيض، سبانخ سوتيه', en_ing:'180g tilapia, 150g white rice, sauteed spinach', cal:418, p:42, c:44, f:9},
+  {ar:'جمبري بالفرن مع أرز بني وجرجير وطماطم كرزية', en:'Baked shrimp with brown rice and arugula and cherry tomatoes', ar_ing:'150غ جمبري، 100غ أرز بني، جرجير وطماطم كرزية', en_ing:'150g shrimp, 100g brown rice, arugula and cherry tomatoes', cal:374, p:35, c:30, f:13},
+  {ar:'ديك رومي بالثوم مع مكرونة وجرجير وطماطم كرزية', en:'Garlic turkey with pasta and arugula and cherry tomatoes', ar_ing:'150غ ديك رومي، 180غ مكرونة، جرجير وطماطم كرزية', en_ing:'150g turkey, 180g pasta, arugula and cherry tomatoes', cal:452, p:46, c:47, f:9},
+  {ar:'تونة مشوي مع كينوا وفاصوليا خضرا', en:'Grilled tuna with quinoa and green beans', ar_ing:'150غ تونة، 150غ كينوا، فاصوليا خضرا', en_ing:'150g tuna, 150g quinoa, green beans', cal:401, p:41, c:43, f:7},
+  {ar:'فيليه بقري سوتيه مع جريش وسلطة خضار', en:'Stir-fried beef fillet with jareesh and vegetable salad', ar_ing:'120غ فيليه بقري، 120غ جريش، سلطة خضار', en_ing:'120g beef fillet, 120g jareesh, vegetable salad', cal:306, p:29, c:35, f:7},
+  {ar:'سمك بلطي بالفرن مع أرز أبيض وفلفل ألوان', en:'Baked tilapia with white rice and bell peppers', ar_ing:'120غ سمك بلطي، 100غ أرز أبيض، فلفل ألوان', en_ing:'120g tilapia, 100g white rice, bell peppers', cal:374, p:27, c:23, f:18},
+  {ar:'ديك رومي بالأعشاب مع بطاطس وسبانخ سوتيه', en:'Herb turkey with potato and sauteed spinach', ar_ing:'200غ ديك رومي، 100غ بطاطس، سبانخ سوتيه', en_ing:'200g turkey, 100g potato, sauteed spinach', cal:456, p:56, c:30, f:13},
+  {ar:'لحمة بقري قليلة الدهن بالليمون مع بطاطس وسبانخ سوتيه', en:'Lemon lean beef with potato and sauteed spinach', ar_ing:'180غ لحمة بقري قليلة الدهن، 100غ بطاطس، سبانخ سوتيه', en_ing:'180g lean beef, 100g potato, sauteed spinach', cal:424, p:46, c:28, f:14},
+  {ar:'ديك رومي بالفلفل الأسود مع جريش وفلفل ألوان', en:'Black Pepper turkey with jareesh and bell peppers', ar_ing:'200غ ديك رومي، 100غ جريش، فلفل ألوان', en_ing:'200g turkey, 100g jareesh, bell peppers', cal:413, p:54, c:32, f:9},
+  {ar:'صدر فرخ بالفرن مع مكرونة وقرنبيط مشوي', en:'Baked chicken breast with pasta and grilled cauliflower', ar_ing:'150غ صدر فرخ، 120غ مكرونة، قرنبيط مشوي', en_ing:'150g chicken breast, 120g pasta, grilled cauliflower', cal:441, p:41, c:32, f:15},
+  {ar:'بيض بالثوم مع أرز بني وفلفل ألوان', en:'Garlic eggs with brown rice and bell peppers', ar_ing:'120غ بيض، 180غ أرز بني، فلفل ألوان', en_ing:'120g eggs, 180g brown rice, bell peppers', cal:400, p:15, c:46, f:17},
+  {ar:'بيض سوتيه مع برغل وقرنبيط مشوي', en:'Stir-fried eggs with bulgur and grilled cauliflower', ar_ing:'200غ بيض، 150غ برغل، قرنبيط مشوي', en_ing:'200g eggs, 150g bulgur, grilled cauliflower', cal:439, p:27, c:42, f:18},
+  {ar:'لحمة ضاني بالفرن مع أرز بني وسبانخ سوتيه', en:'Baked lamb with brown rice and sauteed spinach', ar_ing:'120غ لحمة ضاني، 120غ أرز بني، سبانخ سوتيه', en_ing:'120g lamb, 120g brown rice, sauteed spinach', cal:345, p:29, c:39, f:8},
+  {ar:'لحمة ضاني مشوي مع خبز أسمر وجزر وكوسة', en:'Grilled lamb with whole wheat bread and carrots and zucchini', ar_ing:'180غ لحمة ضاني، 180غ خبز أسمر، جزر وكوسة', en_ing:'180g lamb, 180g whole wheat bread, carrots and zucchini', cal:385, p:40, c:46, f:6},
+  {ar:'لحمة ضاني بالليمون مع بطاطا حلوة وفاصوليا خضرا', en:'Lemon lamb with sweet potato and green beans', ar_ing:'180غ لحمة ضاني، 120غ بطاطا حلوة، فاصوليا خضرا', en_ing:'180g lamb, 120g sweet potato, green beans', cal:430, p:47, c:35, f:11},
+  {ar:'كبدة بقري بالطحينة مع مكرونة وخس وطماطم', en:'Tahini beef liver with pasta and lettuce and tomato', ar_ing:'150غ كبدة بقري، 120غ مكرونة، خس وطماطم', en_ing:'150g beef liver, 120g pasta, lettuce and tomato', cal:409, p:38, c:32, f:14},
+  {ar:'لحمة بقري قليلة الدهن بالفلفل الأسود مع جريش وقرنبيط مشوي', en:'Black Pepper lean beef with jareesh and grilled cauliflower', ar_ing:'150غ لحمة بقري قليلة الدهن، 180غ جريش، قرنبيط مشوي', en_ing:'150g lean beef, 180g jareesh, grilled cauliflower', cal:399, p:35, c:41, f:9},
+  {ar:'لحمة ضاني بالكاري مع كينوا وسلطة خضار', en:'Curry lamb with quinoa and vegetable salad', ar_ing:'200غ لحمة ضاني، 150غ كينوا، سلطة خضار', en_ing:'200g lamb, 150g quinoa, vegetable salad', cal:475, p:43, c:38, f:18},
+  {ar:'لحمة ضاني بالكاري مع برغل وجزر وكوسة', en:'Curry lamb with bulgur and carrots and zucchini', ar_ing:'120غ لحمة ضاني، 120غ برغل، جزر وكوسة', en_ing:'120g lamb, 120g bulgur, carrots and zucchini', cal:377, p:28, c:35, f:15},
+  {ar:'سلمون سوتيه مع بطاطس وفلفل ألوان', en:'Stir-fried salmon with potato and bell peppers', ar_ing:'120غ سلمون، 100غ بطاطس، فلفل ألوان', en_ing:'120g salmon, 100g potato, bell peppers', cal:308, p:23, c:30, f:10},
+  {ar:'سلمون بالكاري مع خبز أسمر وجرجير وطماطم كرزية', en:'Curry salmon with whole wheat bread and arugula and cherry tomatoes', ar_ing:'200غ سلمون، 100غ خبز أسمر، جرجير وطماطم كرزية', en_ing:'200g salmon, 100g whole wheat bread, arugula and cherry tomatoes', cal:407, p:39, c:30, f:15},
+  {ar:'تونة بالفرن مع بطاطس وخس وطماطم', en:'Baked tuna with potato and lettuce and tomato', ar_ing:'120غ تونة، 100غ بطاطس، خس وطماطم', en_ing:'120g tuna, 100g potato, lettuce and tomato', cal:359, p:31, c:33, f:10},
+  {ar:'لحمة ضاني بالفلفل الأسود مع بطاطا حلوة وفلفل ألوان', en:'Black Pepper lamb with sweet potato and bell peppers', ar_ing:'200غ لحمة ضاني، 100غ بطاطا حلوة، فلفل ألوان', en_ing:'200g lamb, 100g sweet potato, bell peppers', cal:432, p:46, c:30, f:13},
+  {ar:'بيض سوتيه مع جريش وسلطة خضار', en:'Stir-fried eggs with jareesh and vegetable salad', ar_ing:'150غ بيض، 100غ جريش، سلطة خضار', en_ing:'150g eggs, 100g jareesh, vegetable salad', cal:329, p:17, c:26, f:17},
+  {ar:'سمك بلطي متبل مع بطاطا حلوة وجرجير وطماطم كرزية', en:'Marinated tilapia with sweet potato and arugula and cherry tomatoes', ar_ing:'180غ سمك بلطي، 100غ بطاطا حلوة، جرجير وطماطم كرزية', en_ing:'180g tilapia, 100g sweet potato, arugula and cherry tomatoes', cal:422, p:41, c:24, f:18},
+  {ar:'سمك بلطي بالفرن مع بطاطا حلوة وفاصوليا خضرا', en:'Baked tilapia with sweet potato and green beans', ar_ing:'120غ سمك بلطي، 180غ بطاطا حلوة، فاصوليا خضرا', en_ing:'120g tilapia, 180g sweet potato, green beans', cal:416, p:28, c:42, f:14},
+  {ar:'فيليه بقري متبل مع بطاطس وجرجير وطماطم كرزية', en:'Marinated beef fillet with potato and arugula and cherry tomatoes', ar_ing:'180غ فيليه بقري، 120غ بطاطس، جرجير وطماطم كرزية', en_ing:'180g beef fillet, 120g potato, arugula and cherry tomatoes', cal:431, p:46, c:35, f:12},
+  {ar:'كبدة بقري متبل مع كينوا وخس وطماطم', en:'Marinated beef liver with quinoa and lettuce and tomato', ar_ing:'180غ كبدة بقري، 100غ كينوا، خس وطماطم', en_ing:'180g beef liver, 100g quinoa, lettuce and tomato', cal:412, p:46, c:24, f:14},
+  {ar:'سلمون متبل مع أرز أبيض وقرنبيط مشوي', en:'Marinated salmon with white rice and grilled cauliflower', ar_ing:'120غ سلمون، 120غ أرز أبيض، قرنبيط مشوي', en_ing:'120g salmon, 120g white rice, grilled cauliflower', cal:348, p:25, c:35, f:12},
+  {ar:'صدر فرخ بالفرن مع بطاطا حلوة وفلفل ألوان', en:'Baked chicken breast with sweet potato and bell peppers', ar_ing:'150غ صدر فرخ، 180غ بطاطا حلوة، فلفل ألوان', en_ing:'150g chicken breast, 180g sweet potato, bell peppers', cal:473, p:41, c:49, f:12},
+  {ar:'فيليه بقري بالفرن مع شعيرية وخس وطماطم', en:'Baked beef fillet with vermicelli and lettuce and tomato', ar_ing:'200غ فيليه بقري، 100غ شعيرية، خس وطماطم', en_ing:'200g beef fillet, 100g vermicelli, lettuce and tomato', cal:503, p:54, c:28, f:18},
+  {ar:'فيليه بقري بالطحينة مع مكرونة وسلطة خضار', en:'Tahini beef fillet with pasta and vegetable salad', ar_ing:'180غ فيليه بقري، 120غ مكرونة، سلطة خضار', en_ing:'180g beef fillet, 120g pasta, vegetable salad', cal:381, p:44, c:29, f:10},
+  {ar:'ديك رومي سوتيه مع عيش بلدي وخيار وطماطم', en:'Stir-fried turkey with baladi bread and cucumber and tomato', ar_ing:'120غ ديك رومي، 100غ عيش بلدي، خيار وطماطم', en_ing:'120g turkey, 100g baladi bread, cucumber and tomato', cal:343, p:37, c:35, f:6},
+  {ar:'فيليه بقري بالليمون مع بطاطس وفاصوليا خضرا', en:'Lemon beef fillet with potato and green beans', ar_ing:'200غ فيليه بقري، 100غ بطاطس، فاصوليا خضرا', en_ing:'200g beef fillet, 100g potato, green beans', cal:406, p:55, c:31, f:8},
+  {ar:'بيض بالطحينة مع شعيرية وخيار وطماطم', en:'Tahini eggs with vermicelli and cucumber and tomato', ar_ing:'120غ بيض، 120غ شعيرية، خيار وطماطم', en_ing:'120g eggs, 120g vermicelli, cucumber and tomato', cal:338, p:15, c:35, f:15},
+  {ar:'فيليه بقري بالثوم مع خبز أسمر وسلطة خضار', en:'Garlic beef fillet with whole wheat bread and vegetable salad', ar_ing:'120غ فيليه بقري، 180غ خبز أسمر، سلطة خضار', en_ing:'120g beef fillet, 180g whole wheat bread, vegetable salad', cal:462, p:31, c:44, f:18},
+  {ar:'ديك رومي بالكاري مع أرز بني وقرنبيط مشوي', en:'Curry turkey with brown rice and grilled cauliflower', ar_ing:'120غ ديك رومي، 180غ أرز بني، قرنبيط مشوي', en_ing:'120g turkey, 180g brown rice, grilled cauliflower', cal:480, p:38, c:51, f:15},
+  {ar:'صدر فرخ متبل مع برغل وسبانخ سوتيه', en:'Marinated chicken breast with bulgur and sauteed spinach', ar_ing:'150غ صدر فرخ، 120غ برغل، سبانخ سوتيه', en_ing:'150g chicken breast, 120g bulgur, sauteed spinach', cal:449, p:42, c:37, f:16},
+  {ar:'صدر فرخ بالطحينة مع كينوا وجزر وكوسة', en:'Tahini chicken breast with quinoa and carrots and zucchini', ar_ing:'200غ صدر فرخ، 120غ كينوا، جزر وكوسة', en_ing:'200g chicken breast, 120g quinoa, carrots and zucchini', cal:424, p:57, c:33, f:7},
+  {ar:'كبدة بقري بالطحينة مع شعيرية وسلطة خضار', en:'Tahini beef liver with vermicelli and vegetable salad', ar_ing:'150غ كبدة بقري، 120غ شعيرية، سلطة خضار', en_ing:'150g beef liver, 120g vermicelli, vegetable salad', cal:334, p:36, c:30, f:8},
+  {ar:'سلمون بالكاري مع أرز أبيض وخس وطماطم', en:'Curry salmon with white rice and lettuce and tomato', ar_ing:'200غ سلمون، 180غ أرز أبيض، خس وطماطم', en_ing:'200g salmon, 180g white rice, lettuce and tomato', cal:538, p:40, c:52, f:18},
+  {ar:'لحمة بقري قليلة الدهن سوتيه مع بطاطس وجرجير وطماطم كرزية', en:'Stir-fried lean beef with potato and arugula and cherry tomatoes', ar_ing:'150غ لحمة بقري قليلة الدهن، 100غ بطاطس، جرجير وطماطم كرزية', en_ing:'150g lean beef, 100g potato, arugula and cherry tomatoes', cal:321, p:39, c:29, f:6},
+  {ar:'فيليه بقري سوتيه مع كينوا وجزر وكوسة', en:'Stir-fried beef fillet with quinoa and carrots and zucchini', ar_ing:'120غ فيليه بقري، 120غ كينوا، جزر وكوسة', en_ing:'120g beef fillet, 120g quinoa, carrots and zucchini', cal:323, p:32, c:32, f:7},
+  {ar:'جمبري بالليمون مع برغل وبروكلي مشوي', en:'Lemon shrimp with bulgur and grilled broccoli', ar_ing:'120غ جمبري، 180غ برغل، بروكلي مشوي', en_ing:'120g shrimp, 180g bulgur, grilled broccoli', cal:440, p:26, c:51, f:16},
+  {ar:'ديك رومي متبل مع برغل وجزر وكوسة', en:'Marinated turkey with bulgur and carrots and zucchini', ar_ing:'120غ ديك رومي، 120غ برغل، جزر وكوسة', en_ing:'120g turkey, 120g bulgur, carrots and zucchini', cal:451, p:37, c:40, f:17},
+  {ar:'ديك رومي بالفلفل الأسود مع شعيرية وفاصوليا خضرا', en:'Black Pepper turkey with vermicelli and green beans', ar_ing:'180غ ديك رومي، 180غ شعيرية، فاصوليا خضرا', en_ing:'180g turkey, 180g vermicelli, green beans', cal:448, p:55, c:38, f:8},
+  {ar:'صدر فرخ بالطحينة مع أرز بني وفلفل ألوان', en:'Tahini chicken breast with brown rice and bell peppers', ar_ing:'200غ صدر فرخ، 120غ أرز بني، فلفل ألوان', en_ing:'200g chicken breast, 120g brown rice, bell peppers', cal:548, p:64, c:35, f:17},
+  {ar:'سمك بلطي بالفلفل الأسود مع بطاطا حلوة وقرنبيط مشوي', en:'Black Pepper tilapia with sweet potato and grilled cauliflower', ar_ing:'180غ سمك بلطي، 150غ بطاطا حلوة، قرنبيط مشوي', en_ing:'180g tilapia, 150g sweet potato, grilled cauliflower', cal:405, p:47, c:37, f:6},
+  {ar:'لحمة ضاني متبل مع أرز أبيض وخس وطماطم', en:'Marinated lamb with white rice and lettuce and tomato', ar_ing:'180غ لحمة ضاني، 120غ أرز أبيض، خس وطماطم', en_ing:'180g lamb, 120g white rice, lettuce and tomato', cal:421, p:41, c:34, f:15},
+  {ar:'لحمة بقري قليلة الدهن بالطحينة مع بطاطس وجرجير وطماطم كرزية', en:'Tahini lean beef with potato and arugula and cherry tomatoes', ar_ing:'150غ لحمة بقري قليلة الدهن، 120غ بطاطس، جرجير وطماطم كرزية', en_ing:'150g lean beef, 120g potato, arugula and cherry tomatoes', cal:331, p:35, c:31, f:9},
+  {ar:'لحمة ضاني بالطحينة مع أرز أبيض وسلطة خضار', en:'Tahini lamb with white rice and vegetable salad', ar_ing:'120غ لحمة ضاني، 180غ أرز أبيض، سلطة خضار', en_ing:'120g lamb, 180g white rice, vegetable salad', cal:426, p:28, c:49, f:14},
 ];
 
 const FAQ_INTENTS = [
@@ -2705,6 +3035,14 @@ const FAQ_INTENTS = [
    ar:'من قسم "صور" زرار "قارن صورتين" يخليك تحط صورتين جنب بعض تشوف الفرق.', en:'In the "Photos" section, "Compare two photos" lets you place two photos side by side to see the difference.', open:'sheet-photos'},
   {kw_ar:['صوت','كلمني','مايك'], kw_en:['voice','microphone','speak'],
    ar:'دوس على 🎤 جنب صندوق الكتابة في المساعد وتكلم بدل ما تكتب.', en:'Tap 🎤 next to the message box in the assistant and speak instead of typing.', open:null},
+  {kw_ar:['نسبة الدهون','دهون الجسم','فات'], kw_en:['body fat','fat percentage'],
+   ar:'من قسم "قياسات" تحت تقدر تدخل الرقبة والحوض وتحسب نسبة دهون تقريبية (بيستخدم الخصر والطول من بياناتك كمان).', en:'From the "Measurements" section, enter your neck and hip to calculate an estimated body fat % (also uses your waist and height).', open:'sheet-measure'},
+  {kw_ar:['ملاحظة','ملاحظات على الوجبة'], kw_en:['note','notes on meal'],
+   ar:'زرار 📝 جنب أي وجبة في السجل يخليك تكتب ملاحظة صغيرة عليها.', en:'The 📝 button next to any meal in the log lets you attach a short note to it.', open:'sheet-log'},
+  {kw_ar:['جراف الأسبوع','آخر 7 أيام'], kw_en:['week chart','last 7 days'],
+   ar:'فوق السجل التاريخي فيه رسم بياني بسعراتك في آخر 7 أيام.', en:'Above the history list there\'s a chart of your calories over the last 7 days.', open:'sheet-history'},
+  {kw_ar:['ادعُ صديق','دعوة'], kw_en:['invite','invite a friend'],
+   ar:'من الإعدادات ⚙ زرار "📨 ادعُ صديق" يخليك تبعت رابط الموقع لأي حد.', en:'From ⚙ Settings, the "📨 Invite a friend" button lets you send the site link to anyone.', open:'settings'},
   {kw_ar:['ذكاء اصطناعي','مساعد','انت مين','بتفهم ازاي'], kw_en:['ai','assistant','who are you','how do you work'],
    ar:'أنا مساعد ذكي محلي بشتغل بمطابقة كلامك مع قاعدة بيانات الأكل والموقع — مش AI حقيقي زي ChatGPT، وبشتغل بالكامل من غير إنترنت أو سيرفر.', en:"I'm a local rule-based assistant that matches your words against the food database and the site's features — not a real AI like ChatGPT, and I work fully offline with no server.", open:null},
 ];
@@ -2816,6 +3154,25 @@ function aiTryRecipe(text){
   const name = lang==='ar' ? r.ar : r.en;
   const ing = lang==='ar' ? r.ar_ing : r.en_ing;
   addAiMessage(`${T[lang].aiRecipeIntro}<br><b>${name}</b><br>${ing}<br><span class="num">${r.cal} ${T[lang].aiMealCardCal} · P${r.p} C${r.c} F${r.f}</span>`, 'bot');
+  return true;
+}
+
+function aiTryGreeting(text){
+  const lower = text.toLowerCase().trim();
+  const greetKw = ['اهلا','أهلا','أهلاً','هاي','هلا','ازيك','إزيك','ازيكم','السلام عليكم','صباح الخير','مساء الخير'];
+  const greetKwEn = ['hi','hello','hey','good morning','good evening'];
+  const hit = greetKw.some(k=> text.includes(k)) || greetKwEn.some(k=> lower.includes(k));
+  if(!hit) return false;
+  addAiMessage(T[lang].aiGreetingReply, 'bot');
+  return true;
+}
+function aiTryCreator(text){
+  const lower = text.toLowerCase();
+  const kw = ['مين عملك','مين صممك','مين مطورك','مين اللي بناك','صنعك مين'];
+  const kwEn = ['who made you','who created you','who built you','who developed you'];
+  const hit = kw.some(k=> text.includes(k)) || kwEn.some(k=> lower.includes(k));
+  if(!hit) return false;
+  addAiMessage(`${T[lang].aiCreatorReply} <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener" style="color:var(--ember);">NexCode</a>`, 'bot');
   return true;
 }
 
@@ -2933,6 +3290,8 @@ function aiHandleMessage(text){
   showAiTyping();
   setTimeout(()=>{
     hideAiTyping();
+    if(aiTryCreator(text)) return;
+    if(aiTryGreeting(text)) return;
     if(aiTryRecipe(text)) return;
     if(aiTryFaq(text)) return;
     if(aiTryMeal(text)) return;
@@ -3052,6 +3411,20 @@ document.getElementById('resetAllBtn').addEventListener('click', ()=>{
   if(!confirm(T[lang].resetConfirm)) return;
   Object.keys(localStorage).filter(k=>k.startsWith('gemaweya_')).forEach(k=>localStorage.removeItem(k));
   location.reload();
+});
+
+document.getElementById('inviteBtn').addEventListener('click', async ()=>{
+  const url = location.href.split('#')[0];
+  const text = T[lang].inviteMsg;
+  if(navigator.share){
+    try{ await navigator.share({title:'Gemaweya', text, url}); return; }catch(e){}
+  }
+  try{
+    await navigator.clipboard.writeText(`${text} ${url}`);
+    alert(T[lang].inviteCopied);
+  }catch(e){
+    prompt(text, url);
+  }
 });
 
 function updateOnboardingUI(){
