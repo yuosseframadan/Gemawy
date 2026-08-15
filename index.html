@@ -254,7 +254,9 @@ section{margin-top:40px;}
 .install-close{background:none; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; padding:2px 4px;}
 
 /* Invite banner sits above the install banner instead of overlapping it */
-#inviteBanner{bottom:96px;}
+#inviteBanner{bottom:96px; opacity:0; pointer-events:none; transition:transform .4s ease, opacity .25s ease;}
+#inviteBanner.show{opacity:1; pointer-events:auto;}
+#inviteBanner:not(.show){transform:translateY(140%);}
 #settingsBtn{background:var(--bg-panel); border:1px solid var(--line); color:var(--text); width:36px; height:36px; border-radius:20px; font-size:15px; cursor:pointer; transition:.2s;}
 #settingsBtn:hover{border-color:var(--ember);}
 .settings-overlay{
@@ -328,7 +330,10 @@ section{margin-top:40px;}
 
 /* History */
 .history-day{border:1px solid var(--line); border-radius:10px; margin-bottom:10px; overflow:hidden;}
-.history-head{display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; background:var(--bg-panel-2);}
+.history-head{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:13px 16px; cursor:pointer; background:var(--bg-panel-2);}
+.history-head>div:last-child{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.history-edit-row input{background:var(--bg-panel-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 8px;}
+
 .history-date{font-size:13px; font-weight:700;}
 .history-summary{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
 .history-cal{font-family:var(--font-display); color:var(--ember); font-size:14px;}
@@ -347,8 +352,8 @@ section{margin-top:40px;}
 .food-row{gap:8px;}
 .food-row-name{flex:1;}
 #streakBadge{color:var(--ember); font-weight:700;}
-.photo-item{position:relative; flex:0 0 auto; width:110px; scroll-snap-align:start;}
-.photo-item img{width:110px; height:140px; object-fit:cover; border-radius:10px; border:1px solid var(--line); display:block;}
+.photo-item{position:relative; width:100%; min-width:0;}
+.photo-item img{width:100%; height:150px; object-fit:cover; border-radius:10px; border:1px solid var(--line); display:block;}
 .photo-date{font-size:10.5px; color:var(--text-muted); margin-top:4px; text-align:center;}
 .photo-del{position:absolute; top:4px; inset-inline-end:4px; background:rgba(10,10,10,.75); border:none; color:#fff; border-radius:50%; width:20px; height:20px; font-size:11px; cursor:pointer; line-height:1;}
 #photoGallery{display:flex; scroll-snap-type:x proximity;}
@@ -726,7 +731,7 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         <button class="btn-ghost" id="photoAddBtn" data-t="photoAdd">+ ضيف صورة</button>
         <button class="btn-ghost" id="comparePhotosBtn" data-t="comparePhotosBtn" style="margin-top:8px;">قارن صورتين</button>
         <div id="photoEmpty" class="chart-empty" data-t="photoEmpty">لسه مفيش صور</div>
-        <div id="photoGallery" style="display:none; gap:10px; overflow-x:auto; margin-top:14px; padding-bottom:4px;"></div>
+        <div id="photoGallery" style="display:none; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:10px; overflow:visible; margin-top:14px; padding-bottom:4px;"></div>
         <div id="compareArea" style="display:none; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
           <div class="settings-block-title"><span data-t="compareTitle">قبل / بعد</span></div>
           <div class="compare-wrap">
@@ -985,14 +990,14 @@ const T = {
     weightGoalTitle:'هدف الوزن', weightGoalTarget:'الوزن المستهدف (كجم)', weightGoalDate:'تاريخ مستهدف (اختياري)',
     weightGoalNeedLog:'سجل وزنك مرة الأول عشان نحسب التقدم', weightGoalProgress:(cur,goal)=> `${cur}كجم من ${goal}كجم`,
     weightGoalReached:'وصلت لهدفك! 🎉',
-    historyTitle:'السجل التاريخي', historySub:'آخر 14 يوم', historyEmpty:'لسه مفيش أيام مسجلة',
-    historyItemsCount:(n)=>`${n} صنف`, todayLabel:'النهاردة',
+    historyTitle:'السجل التاريخي', historySub:'كل الأيام المسجلة', historyEmpty:'لسه مفيش أيام مسجلة',
+    historyItemsCount:(n)=>`${n} صنف`, historyEdit:'تعديل اليوم', historySave:'حفظ التعديلات', historyCancel:'إلغاء', historyDelete:'حذف', historyEditGrams:'تعديل الجرامات', historyNoFood:'الأكلة دي مش موجودة حاليًا', todayLabel:'النهاردة',
     installTitle:'ثبت المنصة على شاشتك الرئيسية', installSub:'وصول أسرع، وتشتغل حتى لو النت واقع',
     installBtnText:'تثبيت', installIosHint:'من متصفح سفاري: دوس على أيقونة المشاركة ⬆️ تحت الشاشة، وبعدين اختار "إضافة إلى الشاشة الرئيسية"',
     credit:'تم تصميم بواسطة <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener">NexCode</a>',
     mealBreakfast:'فطار', mealLunch:'غدا', mealDinner:'عشا', mealSnack:'سناك',
     streakLabel:(n)=> n>0 ? `🔥 ${n} يوم متتالي` : '',
-    photosTitle:'صور التقدم', photosSub:'صورة كل فترة تشوف الفرق', photoAdd:'+ ضيف صورة', photoEmpty:'لسه مفيش صور',
+    photosTitle:'صور التقدم', photosSub:'ضيف صور قد ما تحب — العدد حسب مساحة جهازك', photoAdd:'+ ضيف صورة', photoEmpty:'لسه مفيش صور',
     notifTitle:'التنبيهات', notifSub:'للتطبيق المثبت بس', notifSubText:'تفكير تسجل وجباتك وتشرب مياه',
     notifOffTitle:'التنبيهات مقفولة', notifOnTitle:'التنبيهات شغالة', notifEnable:'تفعيل', notifDisable:'إيقاف',
     notifDenied:'لازم تسمح بالتنبيهات من إعدادات المتصفح', notifMealBody:'وقتها تسجل وجبتك 🍽️', notifWaterBody:'خد شوية مياه دلوقتي 💧',
@@ -1018,7 +1023,7 @@ const T = {
     editGramsHint:'دوس تعدل الجرامات', editGramsPrompt:'الجرامات الجديدة:',
     addNoteHint:'ضيف ملاحظة', addNotePrompt:'ملاحظة على الوجبة دي:',
     bodyFatTitle:'نسبة الدهون التقريبية', bodyFatNeck:'الرقبة (سم)', bodyFatCalc:'احسب', bodyFatResult:(pct)=> `نسبة الدهون التقريبية: ${pct}%`,
-    bodyFatNeedData:'محتاج تدخل الرقبة والخصر والطول والنوع الأول',
+    bodyFatNeedData:'محتاج تدخل الرقبة والخصر والطول والنوع الأول', bodyFatInvalid:'راجع القياسات: لازم الخصر أكبر من الرقبة وكل القيم تكون صحيحة.', bodyFatRange:(pct)=>`نسبة الدهون التقريبية: ${pct}%`,
     weekChartTitle:'آخر 7 أيام', inviteBtn:'📨 ادعُ صديق', inviteMsg:'جرب معايا منصة الجماوية لتتبع أكلك وتمرينك 💪',
     inviteBannerTitle:'ادعُ صديق يستخدم الجماوية معاك', inviteBannerSub:'شاركه الرابط بضغطة واحدة', inviteBtnShort:'مشاركة',
     inviteCopied:'اتنسخ الرابط ✅',
@@ -1116,14 +1121,14 @@ const T = {
     weightGoalTitle:'Weight goal', weightGoalTarget:'Target weight (kg)', weightGoalDate:'Target date (optional)',
     weightGoalNeedLog:'Log your weight once first so we can track progress', weightGoalProgress:(cur,goal)=> `${cur}kg of ${goal}kg`,
     weightGoalReached:'Goal reached! 🎉',
-    historyTitle:'History', historySub:'Last 14 days', historyEmpty:'No days logged yet',
-    historyItemsCount:(n)=>`${n} items`, todayLabel:'Today',
+    historyTitle:'History', historySub:'All logged days', historyEmpty:'No days logged yet',
+    historyItemsCount:(n)=>`${n} items`, historyEdit:'Edit day', historySave:'Save changes', historyCancel:'Cancel', historyDelete:'Delete', historyEditGrams:'Edit grams', historyNoFood:'This food is no longer available', todayLabel:'Today',
     installTitle:'Install the app on your home screen', installSub:'Faster access, works even offline',
     installBtnText:'Install', installIosHint:'In Safari: tap the Share icon ⬆️ at the bottom, then choose "Add to Home Screen"',
     credit:'Designed by <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener">NexCode</a>',
     mealBreakfast:'Breakfast', mealLunch:'Lunch', mealDinner:'Dinner', mealSnack:'Snack',
     streakLabel:(n)=> n>0 ? `🔥 ${n} day streak` : '',
-    photosTitle:'Progress photos', photosSub:'A photo now and then shows the difference', photoAdd:'+ Add photo', photoEmpty:'No photos yet',
+    photosTitle:'Progress photos', photosSub:'Add as many photos as your device storage allows', photoAdd:'+ Add photo', photoEmpty:'No photos yet',
     notifTitle:'Notifications', notifSub:'Installed app only', notifSubText:'Reminders to log meals and drink water',
     notifOffTitle:'Notifications off', notifOnTitle:'Notifications on', notifEnable:'Enable', notifDisable:'Disable',
     notifDenied:'Please allow notifications from your browser settings', notifMealBody:"Time to log your meal 🍽️", notifWaterBody:'Drink some water now 💧',
@@ -1149,7 +1154,7 @@ const T = {
     editGramsHint:'Tap to edit grams', editGramsPrompt:'New grams:',
     addNoteHint:'Add a note', addNotePrompt:'Note for this meal:',
     bodyFatTitle:'Estimated body fat %', bodyFatNeck:'Neck (cm)', bodyFatCalc:'Calculate', bodyFatResult:(pct)=> `Estimated body fat: ${pct}%`,
-    bodyFatNeedData:'Enter neck, waist, height and gender first',
+    bodyFatNeedData:'Enter neck, waist, height and gender first', bodyFatInvalid:'Check the measurements: waist must be larger than neck and all values must be valid.', bodyFatRange:(pct)=>`Estimated body fat: ${pct}%`,
     weekChartTitle:'Last 7 days', inviteBtn:'📨 Invite a friend', inviteMsg:'Try Gemaweya with me to track your food and workouts 💪',
     inviteBannerTitle:'Invite a friend to use Gemaweya', inviteBannerSub:'Share the link with one tap', inviteBtnShort:'Share',
     inviteCopied:'Link copied ✅',
@@ -1759,8 +1764,6 @@ function loadLog(){
 function saveLog(items){
   const all = JSON.parse(localStorage.getItem('gemaweya_log')||'{}');
   all[activeDayKey()] = items;
-  const keys = Object.keys(all).sort();
-  while(keys.length > 14){ delete all[keys.shift()]; }
   localStorage.setItem('gemaweya_log', JSON.stringify(all));
 }
 
@@ -2272,7 +2275,7 @@ function renderHistory(){
   renderWeekChart();
   const card = document.getElementById('historyCard');
   const all = loadAllLogs();
-  const dates = Object.keys(all).filter(d=> all[d] && all[d].length>0 && d!==activeDayKey()).sort().reverse();
+  const dates = Object.keys(all).filter(d=> all[d] && all[d].length>0).sort().reverse();
   if(dates.length===0){
     card.innerHTML = `<div class="chart-empty">${T[lang].historyEmpty}</div>`;
     return;
@@ -2284,32 +2287,91 @@ function renderHistory(){
       const food = allFoods()[it.foodIdx];
       if(food) cal += Math.round(food.cal * it.grams/100);
     });
-    return `<div class="history-day">
+    const itemRows = items.map((it,idx)=>{
+      const food = allFoods()[it.foodIdx];
+      if(!food) return `<div class="history-item-row"><span>${T[lang].historyNoFood}</span><span><button class="btn-ghost history-item-delete" data-date="${d}" data-idx="${idx}" style="padding:4px 8px;">✕</button></span></div>`;
+      const c = Math.round(food.cal * it.grams/100);
+      return `<div class="history-item-row"><span>${lang==='ar'?food.ar:food.en} (${it.grams}${lang==='ar'?'غ':'g'})</span><span class="num">${c} ${lang==='ar'?'سعرة':'kcal'}</span></div>`;
+    }).join('');
+    return `<div class="history-day" data-date="${d}">
       <div class="history-head" data-date="${d}">
         <div>
           <div class="history-date">${d}</div>
           <div class="history-summary">${T[lang].historyItemsCount(items.length)}</div>
         </div>
-        <div class="history-cal num">${cal} ${lang==='ar'?'سعرة':'kcal'}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="history-cal num">${cal} ${lang==='ar'?'سعرة':'kcal'}</div>
+          <button class="btn-ghost history-edit-day" data-date="${d}" style="padding:6px 9px;">✎ ${T[lang].historyEdit}</button>
+        </div>
       </div>
       <div class="history-items" id="hist-${d}">
-        ${items.map(it=>{
-          const food = allFoods()[it.foodIdx];
-          if(!food) return '';
-          const c = Math.round(food.cal * it.grams/100);
-          return `<div class="history-item-row"><span>${lang==='ar'?food.ar:food.en} (${it.grams}${lang==='ar'?'غ':'g'})</span><span class="num">${c} ${lang==='ar'?'سعرة':'kcal'}</span></div>`;
-        }).join('')}
+        <div class="history-view-items">${itemRows}</div>
+        <div class="history-edit-panel" id="edit-${d}" style="display:none;margin-top:10px;">
+          ${items.map((it,idx)=>{
+            const food=allFoods()[it.foodIdx];
+            const name=food?(lang==='ar'?food.ar:food.en):T[lang].historyNoFood;
+            return `<div class="history-edit-row" style="display:flex;align-items:center;gap:8px;margin:7px 0;">
+              <div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+              <input type="number" min="1" class="history-grams-input" data-date="${d}" data-idx="${idx}" value="${Number(it.grams)||1}" style="width:85px;">
+              <button class="btn-ghost history-delete-item" data-date="${d}" data-idx="${idx}" style="padding:5px 8px;">✕</button>
+            </div>`;
+          }).join('')}
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn-primary history-save-day" data-date="${d}">${T[lang].historySave}</button>
+            <button class="btn-ghost history-cancel-day" data-date="${d}">${T[lang].historyCancel}</button>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
+
   card.querySelectorAll('.history-head').forEach(head=>{
-    head.addEventListener('click', ()=>{
-      const d = head.getAttribute('data-date');
+    head.addEventListener('click', (e)=>{
+      if(e.target.closest('button')) return;
+      const d=head.getAttribute('data-date');
       document.getElementById('hist-'+d).classList.toggle('open');
     });
   });
+  card.querySelectorAll('.history-edit-day').forEach(btn=>btn.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const d=btn.dataset.date;
+    const items=document.getElementById('hist-'+d);
+    items.classList.add('open');
+    document.getElementById('edit-'+d).style.display='block';
+  }));
+  card.querySelectorAll('.history-cancel-day').forEach(btn=>btn.addEventListener('click',()=>renderHistory()));
+  card.querySelectorAll('.history-save-day').forEach(btn=>btn.addEventListener('click',()=>{
+    const d=btn.dataset.date;
+    const all=loadAllLogs();
+    const items=all[d]||[];
+    document.querySelectorAll(`.history-grams-input[data-date="${d}"]`).forEach(input=>{
+      const idx=Number(input.dataset.idx), val=parseFloat(input.value);
+      if(items[idx] && val>0) items[idx].grams=val;
+    });
+    all[d]=items;
+    localStorage.setItem('gemaweya_log',JSON.stringify(all));
+    renderHistory();
+    if(d===activeDayKey()){ renderLog(); renderGauge(); }
+  }));
+  card.querySelectorAll('.history-delete-item').forEach(btn=>btn.addEventListener('click',()=>{
+    const d=btn.dataset.date, idx=Number(btn.dataset.idx), all=loadAllLogs();
+    if(!all[d]) return;
+    if(!confirm(T[lang].historyDelete+'?')) return;
+    all[d].splice(idx,1);
+    if(all[d].length===0) delete all[d];
+    localStorage.setItem('gemaweya_log',JSON.stringify(all));
+    renderHistory();
+    if(d===activeDayKey()){ renderLog(); renderGauge(); }
+  }));
+  card.querySelectorAll('.history-item-delete').forEach(btn=>btn.addEventListener('click',()=>{
+    const d=btn.dataset.date, idx=Number(btn.dataset.idx), all=loadAllLogs();
+    if(!all[d]) return;
+    all[d].splice(idx,1);
+    if(all[d].length===0) delete all[d];
+    localStorage.setItem('gemaweya_log',JSON.stringify(all));
+    renderHistory();
+  }));
 }
-
 /* ---------------- PWA: install banner + service worker ---------------- */
 let deferredInstallPrompt = null;
 const installBanner = document.getElementById('installBanner');
@@ -2400,9 +2462,61 @@ if('serviceWorker' in navigator){
 }
 
 /* ---------------- Progress photos ---------------- */
-function loadPhotos(){ try{ return JSON.parse(localStorage.getItem('gemaweya_photos')||'[]'); }catch(e){ return []; } }
-function savePhotos(list){ localStorage.setItem('gemaweya_photos', JSON.stringify(list)); }
-
+let photosCache = [];
+let photosReady = false;
+async function getPhotoStore(){
+  const db = await idbOpen();
+  return db;
+}
+async function loadPhotosAsync(){
+  try{
+    const db=await getPhotoStore();
+    return await new Promise((resolve,reject)=>{
+      const tx=db.transaction('photos','readonly');
+      const req=tx.objectStore('photos').getAll();
+      req.onsuccess=()=>resolve((req.result||[]).sort((a,b)=>a.id-b.id));
+      req.onerror=()=>reject(req.error);
+    });
+  }catch(e){ return []; }
+}
+async function savePhotoRecord(photo){
+  const db=await getPhotoStore();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('photos','readwrite');
+    tx.objectStore('photos').put(photo);
+    tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+  });
+}
+async function deletePhotoRecord(id){
+  const db=await getPhotoStore();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('photos','readwrite');
+    tx.objectStore('photos').delete(id);
+    tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+  });
+}
+async function clearPhotoStore(){
+  const db=await getPhotoStore();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('photos','readwrite');
+    tx.objectStore('photos').clear();
+    tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+  });
+}
+async function migratePhotosToIDB(){
+  try{
+    const db=await getPhotoStore();
+    const existing=await loadPhotosAsync();
+    const old=JSON.parse(localStorage.getItem('gemaweya_photos')||'[]');
+    if(existing.length===0 && old.length){
+      let next=Date.now()-old.length;
+      for(const p of old){ await savePhotoRecord({id:++next,date:p.date,img:p.img}); }
+      localStorage.removeItem('gemaweya_photos');
+    }
+    photosCache=await loadPhotosAsync();
+    photosReady=true;
+  }catch(e){ photosCache=[]; photosReady=true; }
+}
 function resizeImage(file, maxW){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -2415,7 +2529,7 @@ function resizeImage(file, maxW){
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.6));
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -2424,65 +2538,37 @@ function resizeImage(file, maxW){
     reader.readAsDataURL(file);
   });
 }
-
-document.getElementById('photoAddBtn').addEventListener('click', ()=>{
-  document.getElementById('photoInput').click();
-});
+document.getElementById('photoAddBtn').addEventListener('click', ()=>document.getElementById('photoInput').click());
 document.getElementById('photoInput').addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
+  const file=e.target.files[0]; if(!file) return;
   try{
-    const dataUrl = await resizeImage(file, 500);
-    let photos = loadPhotos();
-    photos.push({date: todayKey(), img: dataUrl});
-    // cap stored photos to keep localStorage usage reasonable
-    while(photos.length > 30) photos.shift();
-    savePhotos(photos);
+    const dataUrl=await resizeImage(file,900);
+    const photo={id:Date.now()+Math.floor(Math.random()*1000),date:todayKey(),img:dataUrl};
+    await savePhotoRecord(photo);
+    photosCache=await loadPhotosAsync();
     renderPhotos();
-  }catch(err){}
-  e.target.value = '';
+  }catch(err){ alert(lang==='ar'?'تعذر حفظ الصورة، جرّب صورة أصغر.':'Could not save the photo. Try a smaller image.'); }
+  e.target.value='';
 });
 function renderPhotos(){
-  const photos = loadPhotos();
-  const gallery = document.getElementById('photoGallery');
-  const empty = document.getElementById('photoEmpty');
-  if(photos.length===0){
-    empty.style.display = 'block';
-    gallery.style.display = 'none';
-    return;
-  }
-  empty.style.display = 'none';
-  gallery.style.display = 'flex';
-  gallery.innerHTML = photos.slice().reverse().map((p,revIdx)=>{
-    const idx = photos.length - 1 - revIdx;
-    return `<div class="photo-item" data-idx="${idx}">
-      <img src="${p.img}" alt="progress">
-      <button class="photo-del" data-idx="${idx}">✕</button>
-      <div class="photo-date">${p.date}</div>
-    </div>`;
-  }).join('');
-  gallery.querySelectorAll('.photo-del').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      const idx = parseInt(btn.getAttribute('data-idx'));
-      let photos = loadPhotos();
-      photos.splice(idx,1);
-      savePhotos(photos);
-      renderPhotos();
-    });
-  });
-  gallery.querySelectorAll('.photo-item').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      if(!compareActiveSlot) return;
-      const idx = parseInt(item.getAttribute('data-idx'));
-      const p = loadPhotos()[idx];
-      const slotEl = document.getElementById('compareSlot'+compareActiveSlot);
-      slotEl.innerHTML = `<img src="${p.img}" alt="compare">`;
-      compareActiveSlot = null;
-    });
-  });
+  const gallery=document.getElementById('photoGallery'), empty=document.getElementById('photoEmpty');
+  const photos=photosCache.slice().sort((a,b)=>b.id-a.id);
+  if(photos.length===0){ empty.style.display='block'; gallery.style.display='none'; return; }
+  empty.style.display='none'; gallery.style.display='grid';
+  gallery.innerHTML=photos.map(p=>`<div class="photo-item" data-id="${p.id}"><img src="${p.img}" alt="progress"><button class="photo-del" data-id="${p.id}">✕</button><div class="photo-date">${p.date}</div></div>`).join('');
+  gallery.querySelectorAll('.photo-del').forEach(btn=>btn.addEventListener('click',async e=>{
+    e.stopPropagation();
+    await deletePhotoRecord(Number(btn.dataset.id));
+    photosCache=await loadPhotosAsync(); renderPhotos();
+  }));
+  gallery.querySelectorAll('.photo-item').forEach(item=>item.addEventListener('click',()=>{
+    if(!compareActiveSlot) return;
+    const p=photosCache.find(x=>x.id===Number(item.dataset.id));
+    if(!p) return;
+    document.getElementById('compareSlot'+compareActiveSlot).innerHTML=`<img src="${p.img}" alt="compare">`;
+    compareActiveSlot=null;
+  }));
 }
-
 /* ---------------- Photo comparison ---------------- */
 let compareActiveSlot = null;
 document.getElementById('comparePhotosBtn').addEventListener('click', ()=>{
@@ -2497,8 +2583,12 @@ const IDB_NAME='gemaweya-kv', IDB_STORE='kv';
 function idbOpen(){
   return new Promise((resolve,reject)=>{
     if(!('indexedDB' in window)){ reject('no idb'); return; }
-    const req = indexedDB.open(IDB_NAME, 1);
-    req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE); };
+    const req = indexedDB.open(IDB_NAME, 2);
+    req.onupgradeneeded = ()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      if(!db.objectStoreNames.contains('photos')) db.createObjectStore('photos',{keyPath:'id'});
+    };
     req.onsuccess = ()=> resolve(req.result);
     req.onerror = ()=> reject(req.error);
   });
@@ -2619,14 +2709,15 @@ function checkNotifDue(){
 }
 
 /* ---------------- Backup & Restore ---------------- */
-document.getElementById('exportBtn').addEventListener('click', ()=>{
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  const backupPhotos = await loadPhotosAsync();
   const backup = {
     target: localStorage.getItem('gemaweya_target'),
     log: localStorage.getItem('gemaweya_log'),
     weights: localStorage.getItem('gemaweya_weights'),
     customFoods: localStorage.getItem('gemaweya_custom_foods'),
     favorites: localStorage.getItem('gemaweya_favorites'),
-    photos: localStorage.getItem('gemaweya_photos'),
+    photos: JSON.stringify(backupPhotos),
     water: localStorage.getItem('gemaweya_water'),
     measurements: localStorage.getItem('gemaweya_measurements'),
     workouts: localStorage.getItem('gemaweya_workouts'),
@@ -2647,7 +2738,15 @@ document.getElementById('importBtn').addEventListener('click', ()=>{
 /* ---------------- PDF monthly report ---------------- */
 document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
   if(typeof window.jspdf === 'undefined'){
-    alert(lang==='ar' ? 'محتاج نت عشان يحمل مكتبة الـ PDF أول مرة' : 'Needs internet to load the PDF library the first time');
+    const all=loadAllLogs();
+    const dates=Object.keys(all).filter(d=>all[d]&&all[d].length>0).sort();
+    const last30=dates.filter(d=>{const diffDays=(new Date(todayKey())-new Date(d))/(1000*60*60*24); return diffDays>=0&&diffDays<=30;});
+    if(!last30.length){ alert(T[lang].pdfNoData); return; }
+    const rows=last30.map(d=>{ const cal=(all[d]||[]).reduce((sum,it)=>{const f=allFoods()[it.foodIdx]; return sum+(f?Math.round(f.cal*it.grams/100):0);},0); return `<tr><td>${d}</td><td>${cal} ${lang==='ar'?'سعرة':'kcal'}</td><td>${all[d].length}</td></tr>`; }).join('');
+    const w=window.open('','_blank');
+    if(!w){ alert(lang==='ar'?'اسمح بفتح النوافذ المنبثقة ثم جرّب مرة أخرى.':'Allow pop-ups and try again.'); return; }
+    w.document.write(`<html dir="${lang==='ar'?'rtl':'ltr'}"><head><title>${T[lang].pdfTitle}</title><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;padding:28px;color:#222}h1{margin-bottom:6px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:10px;text-align:start}</style></head><body onload="setTimeout(()=>window.print(),300)"><h1>${T[lang].pdfTitle}</h1><div>${T[lang].pdfPeriod(last30[0],last30[last30.length-1])}</div><table><thead><tr><th>${lang==='ar'?'التاريخ':'Date'}</th><th>${lang==='ar'?'السعرات':'Calories'}</th><th>${lang==='ar'?'الأصناف':'Items'}</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close();
     return;
   }
   const all = loadAllLogs();
@@ -2681,6 +2780,16 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
     const delta = (weightsInRange[weightsInRange.length-1].weight - weightsInRange[0].weight).toFixed(1);
     weightChangeStr = (delta>0?'+':'') + delta + (lang==='ar'?' كجم':' kg');
   }
+  let bodyFatPdf='—';
+  try{
+    const target=loadTarget(), neckCm=parseFloat(document.getElementById('mNeck').value), ms=loadMeasurements(), latest=ms.slice().reverse().find(x=>x.waist);
+    const waistCm=latest?parseFloat(latest.waist):NaN, hipCm=parseFloat(document.getElementById('mHip').value);
+    if(target && Number.isFinite(neckCm) && Number.isFinite(waistCm) && waistCm>neckCm && Number(target.h)>0 && (target.gender!=='female'||Number.isFinite(hipCm))){
+      const neck=neckCm/2.54, waist=waistCm/2.54, hip=hipCm/2.54, height=Number(target.h)/2.54;
+      let pct=target.gender==='male'?495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(height))-450:495/(1.29579-0.35004*Math.log10(waist+hip-neck)+0.221*Math.log10(height))-450;
+      if(Number.isFinite(pct)) bodyFatPdf=pct.toFixed(1)+'%';
+    }
+  }catch(e){}
   const adherencePct = Math.round((n/30)*100);
   const workoutMap = loadWorkoutMap();
   const workoutDays = Object.keys(workoutMap).filter(d=> d>=last30[0] && d<=last30[n-1] && workoutMap[d] && workoutMap[d].length>0).length;
@@ -2730,6 +2839,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
     {label:T[lang].pdfWeightChange, value:weightChangeStr, unit:''},
     {label:T[lang].pdfAdherence, value:`${n}/30`, unit:`(${adherencePct}%)`},
     {label:T[lang].pdfStreak, value:`${streak}`, unit:lang==='ar'?'يوم':'days'},
+    {label:lang==='ar'?'نسبة الدهون التقريبية':'Estimated body fat', value:bodyFatPdf, unit:''},
   ];
   statCards.forEach((c,i)=>{
     const col = i%2, row = Math.floor(i/2);
@@ -2753,7 +2863,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
   });
 
   // Macros row (month totals, with daily average as secondary context)
-  let macroY = cardY0 + 2*(cardH+24) + 30;
+  let macroY = cardY0 + 3*(cardH+24) + 30;
   ctx.textAlign = isAr ? 'right' : 'left';
   ctx.fillStyle = inkDark;
   ctx.font = '700 30px Tajawal, sans-serif';
@@ -2814,7 +2924,7 @@ document.getElementById('importInput').addEventListener('change', (e)=>{
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = (ev)=>{
+  reader.onload = async (ev)=>{
     try{
       const data = JSON.parse(ev.target.result);
       if(!confirm(T[lang].importConfirm)){ return; }
@@ -2823,7 +2933,13 @@ document.getElementById('importInput').addEventListener('change', (e)=>{
       if(data.weights) localStorage.setItem('gemaweya_weights', data.weights);
       if(data.customFoods) localStorage.setItem('gemaweya_custom_foods', data.customFoods);
       if(data.favorites) localStorage.setItem('gemaweya_favorites', data.favorites);
-      if(data.photos) localStorage.setItem('gemaweya_photos', data.photos);
+      if(data.photos){
+        try{
+          const importedPhotos=JSON.parse(data.photos);
+          await clearPhotoStore();
+          for(const ph of importedPhotos){ await savePhotoRecord(ph); }
+        }catch(e){}
+      }
       if(data.water) localStorage.setItem('gemaweya_water', data.water);
       if(data.measurements) localStorage.setItem('gemaweya_measurements', data.measurements);
       if(data.workouts) localStorage.setItem('gemaweya_workouts', data.workouts);
@@ -2897,28 +3013,32 @@ function renderMeasurements(){
 }
 
 /* ---------------- Body fat % (US Navy method) ---------------- */
-document.getElementById('calcBodyFatBtn').addEventListener('click', ()=>{
-  const target = loadTarget();
-  const neck = parseFloat(document.getElementById('mNeck').value);
-  const hip = parseFloat(document.getElementById('mHip').value);
-  const measurements = loadMeasurements();
-  const waist = measurements.length ? measurements[measurements.length-1].waist : null;
-  const resultEl = document.getElementById('bodyFatResult');
-  if(!target || !neck || !waist || (target.gender==='female' && !hip)){
-    resultEl.textContent = T[lang].bodyFatNeedData;
-    return;
+document.getElementById('calcBodyFatBtn').addEventListener('click',()=>{
+  const target=loadTarget();
+  const neckCm=parseFloat(document.getElementById('mNeck').value);
+  const hipCm=parseFloat(document.getElementById('mHip').value);
+  const measurements=loadMeasurements();
+  const latest=measurements.slice().reverse().find(x=>x.waist);
+  const waistCm=latest ? parseFloat(latest.waist) : NaN;
+  const resultEl=document.getElementById('bodyFatResult');
+  if(!target || !Number.isFinite(neckCm) || !Number.isFinite(waistCm) || !Number.isFinite(Number(target.h)) || !target.gender || (target.gender==='female' && !Number.isFinite(hipCm))){
+    resultEl.textContent=T[lang].bodyFatNeedData; return;
   }
-  const heightCm = target.h;
+  if(neckCm<=0 || waistCm<=0 || Number(target.h)<=0 || waistCm<=neckCm || (target.gender==='female' && hipCm<=0)){
+    resultEl.textContent=T[lang].bodyFatInvalid; return;
+  }
+  // US Navy constants are calibrated for inches, so convert all measurements first.
+  const neck=neckCm/2.54, waist=waistCm/2.54, hip=hipCm/2.54, height=Number(target.h)/2.54;
   let pct;
   if(target.gender==='male'){
-    pct = 495 / (1.0324 - 0.19077*Math.log10(waist-neck) + 0.15456*Math.log10(heightCm)) - 450;
-  } else {
-    pct = 495 / (1.29579 - 0.35004*Math.log10(waist+hip-neck) + 0.22100*Math.log10(heightCm)) - 450;
+    pct=495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(height))-450;
+  }else{
+    pct=495/(1.29579-0.35004*Math.log10(waist+hip-neck)+0.22100*Math.log10(height))-450;
   }
-  pct = Math.max(3, Math.min(60, pct));
-  resultEl.textContent = T[lang].bodyFatResult(pct.toFixed(1));
+  if(!Number.isFinite(pct)){ resultEl.textContent=T[lang].bodyFatInvalid; return; }
+  pct=Math.max(3,Math.min(60,pct));
+  resultEl.textContent=T[lang].bodyFatRange(pct.toFixed(1));
 });
-
 /* ---------------- Workout log ---------------- */
 /* ---------------- Rest timer ---------------- */
 let restTimerSeconds = 60;
@@ -4183,14 +4303,18 @@ async function shareInviteLink(){
   }
 }
 document.getElementById('inviteBannerBtn').addEventListener('click', shareInviteLink);
+let inviteBannerDismissed = sessionStorage.getItem('gemaweya_invite_dismissed_session') === '1';
+let inviteBannerTimer = null;
 document.getElementById('inviteBannerCloseBtn').addEventListener('click', ()=>{
+  inviteBannerDismissed = true;
+  if(inviteBannerTimer) clearTimeout(inviteBannerTimer);
   document.getElementById('inviteBanner').classList.remove('show');
   sessionStorage.setItem('gemaweya_invite_dismissed_session', '1');
 });
 function showInviteBannerOnce(){
-  if(sessionStorage.getItem('gemaweya_invite_dismissed_session')==='1') return;
+  if(inviteBannerDismissed || sessionStorage.getItem('gemaweya_invite_dismissed_session')==='1') return;
   if(document.getElementById('settingsOverlay').classList.contains('show')){
-    setTimeout(showInviteBannerOnce, 1500);
+    inviteBannerTimer = setTimeout(showInviteBannerOnce, 1500);
     return;
   }
   document.getElementById('inviteBanner').classList.add('show');
@@ -4203,7 +4327,11 @@ function updateOnboardingUI(){
 }
 
 /* ---------------- Init ---------------- */
-function init(){
+async function init(){
+  // Always require authentication again after a fresh app/page launch.
+  if(getPin()){
+    sessionStorage.removeItem('gemaweya_pin_unlocked');
+  }
   const target = loadTarget();
   if(target){
     document.getElementById('inWeight').value = target.w;
@@ -4216,6 +4344,7 @@ function init(){
       b.classList.toggle('active', b.getAttribute('data-goal')===target.goal);
     });
   }
+  await migratePhotosToIDB();
   renderPhotos();
   setupNotifSection();
   updateOnboardingUI();
@@ -4255,10 +4384,10 @@ async function registerBiometric(){
   const cred = await navigator.credentials.create({
     publicKey: {
       challenge,
-      rp: { name: 'Gemaweya' },
+      rp: { name: 'Gemaweya', id: location.hostname },
       user: { id: userId, name: 'gemaweya-user', displayName: 'Gemaweya' },
       pubKeyCredParams: [{alg:-7, type:'public-key'}, {alg:-257, type:'public-key'}],
-      authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+      authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred' },
       timeout: 60000,
     }
   });
@@ -4272,6 +4401,7 @@ async function verifyBiometric(){
   const assertion = await navigator.credentials.get({
     publicKey: {
       challenge,
+      rpId: location.hostname,
       allowCredentials: [{ id: base64ToBuf(credIdB64), type:'public-key' }],
       userVerification: 'required',
       timeout: 60000,
@@ -4322,7 +4452,6 @@ function showPinLock(mode, onSuccess){
   const bioBtn = document.getElementById('biometricUnlockBtn');
   if(mode==='enter' && biometricEnabled()){
     bioBtn.style.display = 'block';
-    setTimeout(()=>{ if(document.getElementById('pinLockScreen').style.display!=='none') document.getElementById('biometricUnlockBtn').click(); }, 400);
   } else {
     bioBtn.style.display = 'none';
   }
