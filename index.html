@@ -177,7 +177,7 @@ section{margin-top:40px;}
 .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;}
 .section-title{font-family:var(--font-display); font-size:19px; font-weight:600; letter-spacing:.3px;}
 .section-sub{font-size:12px; color:var(--text-muted);}
-.card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+.card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:0 4px 14px rgba(0,0,0,.18);}
 
 /* Calculator */
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
@@ -190,6 +190,20 @@ section{margin-top:40px;}
 .seg button.active{border-color:var(--ember); color:var(--text); background:color-mix(in srgb, var(--ember) 15%, transparent);}
 .btn-primary{width:100%; margin-top:16px; background:var(--ember); color:#0a0a0a; border:none; padding:13px; border-radius:8px; font-family:var(--font-display); font-weight:600; font-size:14px; letter-spacing:.5px; cursor:pointer; transition:.2s;}
 .btn-primary:hover{filter:brightness(1.1);}
+.btn-ghost{width:100%; margin-top:16px; background:transparent; color:var(--text); border:1px solid var(--line); padding:12px; border-radius:8px; font-family:var(--font-display); font-weight:600; font-size:13.5px; letter-spacing:.3px; cursor:pointer; transition:.2s;}
+.btn-ghost:hover{border-color:var(--ember); color:var(--ember);}
+.btn-ghost:disabled{opacity:.5; cursor:not-allowed;}
+.wa-card{display:flex; align-items:center; gap:14px; padding:16px; border-radius:var(--radius); border:1px solid var(--line);}
+.wa-icon{width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:19px;}
+.wa-text{flex:1; min-width:0;}
+.wa-title{font-size:13.5px; font-weight:700;}
+.wa-sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+.wa-btn{flex-shrink:0; border:none; border-radius:8px; padding:9px 16px; font-family:var(--font-display); font-weight:600; font-size:12.5px; cursor:pointer; transition:.2s;}
+.wa-btn:hover{filter:brightness(1.1);}
+.rest-timer-display{font-family:var(--font-display); font-size:52px; text-align:center; color:var(--ember); margin:10px 0;}
+.rest-timer-presets{display:flex; gap:8px; justify-content:center;}
+.rest-timer-controls{display:flex; gap:10px;}
+.rest-timer-controls button{margin-top:0 !important;}
 
 /* Food search */
 .search-row{display:flex; gap:8px; margin-bottom:12px;}
@@ -239,7 +253,8 @@ section{margin-top:40px;}
 .install-btn{background:var(--ember); color:#0a0a0a; border:none; padding:9px 16px; border-radius:8px; font-family:var(--font-display); font-weight:600; font-size:12.5px; cursor:pointer; white-space:nowrap;}
 .install-close{background:none; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; padding:2px 4px;}
 
-/* Settings overlay */
+/* Invite banner sits above the install banner instead of overlapping it */
+#inviteBanner{bottom:96px;}
 #settingsBtn{background:var(--bg-panel); border:1px solid var(--line); color:var(--text); width:36px; height:36px; border-radius:20px; font-size:15px; cursor:pointer; transition:.2s;}
 #settingsBtn:hover{border-color:var(--ember);}
 .settings-overlay{
@@ -282,6 +297,9 @@ section{margin-top:40px;}
 .ai-typing span:nth-child(2){animation-delay:.15s;}
 .ai-typing span:nth-child(3){animation-delay:.3s;}
 @keyframes ai-bounce{0%,60%,100%{transform:translateY(0); opacity:.4;} 30%{transform:translateY(-4px); opacity:1;}}
+.ai-quick-cmds{display:flex; gap:8px; padding:0 20px 12px; overflow-x:auto; flex-shrink:0;}
+.ai-quick-cmds button{flex:0 0 auto; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:8px 14px; border-radius:16px; font-size:12px; cursor:pointer; white-space:nowrap; transition:.2s;}
+.ai-quick-cmds button:hover{border-color:var(--ember); color:var(--ember);}
 .ai-input-row{display:flex; gap:10px; padding:14px 20px; border-top:1px solid var(--line); flex-shrink:0;}
 .ai-input-row input{flex:1; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--text); padding:11px 14px; border-radius:20px; font-family:'Tajawal',sans-serif; font-size:14px;}
 .ai-input-row input:focus{outline:none; border-color:var(--ember);}
@@ -370,6 +388,17 @@ section{margin-top:40px;}
 }
 .level-pill-bar{width:60px; height:5px; background:rgba(0,0,0,.25); border-radius:3px; overflow:hidden;}
 .level-pill-bar-fill{height:100%; background:#0a0a0a; opacity:.55;}
+.score-pill{
+  display:inline-flex; align-items:center; gap:10px; margin:14px auto 0; padding:8px 16px 8px 10px;
+  background:var(--bg-panel); border:1px solid var(--line);
+  border-radius:20px; font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--text);
+}
+.score-pill-ring{
+  width:34px; height:34px; border-radius:50%;
+  background:conic-gradient(var(--ok) calc(var(--score,0)*1%), var(--bg-panel-2) 0);
+  display:flex; align-items:center; justify-content:center;
+}
+.score-pill-ring-inner{width:26px; height:26px; border-radius:50%; background:var(--bg-panel); display:flex; align-items:center; justify-content:center; font-size:11px;}
 .badges-row{display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap;}
 .badge-item{display:flex; flex-direction:column; align-items:center; gap:6px; opacity:.55; transition:opacity .3s ease, transform .3s ease;}
 .badge-item.unlocked{opacity:1;}
@@ -478,6 +507,8 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
     </div>
 
     <button class="btn-ghost" id="shareBtn" style="max-width:260px; margin:18px auto 0;" data-t="shareBtn">📤 مشاركة يومك</button>
+    <div class="score-pill" id="scorePill"></div>
+    <div class="section-sub" id="smartTip" style="max-width:320px; margin:10px auto 0; text-align:center;"></div>
     <div class="level-pill" id="levelPill"></div>
     <div class="badges-row" id="badgesRow"></div>
   </div>
@@ -660,6 +691,21 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
         <div id="workoutList" style="margin-top:14px;"></div>
 
         <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+          <div class="settings-block-title" data-t="restTimerTitle">مؤقت الراحة</div>
+          <div class="rest-timer-display num" id="restTimerDisplay">01:00</div>
+          <div class="rest-timer-presets">
+            <button class="chip" data-secs="30">30s</button>
+            <button class="chip active" data-secs="60">60s</button>
+            <button class="chip" data-secs="90">90s</button>
+            <button class="chip" data-secs="120">120s</button>
+          </div>
+          <div class="rest-timer-controls">
+            <button class="btn-primary" id="restTimerStart" style="margin-top:12px;" data-t="restTimerStart">ابدأ</button>
+            <button class="btn-ghost" id="restTimerReset" style="margin-top:12px;" data-t="restTimerReset">إعادة</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
           <div class="settings-block-title" data-t="plannerTitle">جدول التمارين الأسبوعي</div>
           <div id="plannerGrid"></div>
         </div>
@@ -738,6 +784,11 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
           أهلاً! اسألني عن وصفات، أو قولي إيه اللي أكلته وأنا أحسبهولك وأضيفه في سجل وجباتك، أو اسألني عن أي جزء في الموقع.
         </div>
       </div>
+      <div class="ai-quick-cmds" id="aiQuickCmds">
+        <button data-cmd="analyze">📊 <span data-t="aiCmdAnalyze">حلل يومي</span></button>
+        <button data-cmd="recipe">🍽 <span data-t="aiCmdRecipe">اقترح وصفة</span></button>
+        <button data-cmd="breakfast">🌅 <span data-t="aiCmdBreakfast">فطار بروتين</span></button>
+      </div>
       <div class="ai-input-row">
         <input type="text" id="aiInput" data-t-ph="aiInputPh" placeholder="اكتب رسالتك...">
         <button id="aiVoiceBtn" style="background:var(--steel);">🎤</button>
@@ -755,7 +806,7 @@ footer{text-align:center; padding:30px 0 10px; color:var(--text-muted); font-siz
   <div class="install-icon">⬇</div>
   <div class="install-text">
     <div class="install-title" data-t="installTitle">ثبت المنصة على شاشتك الرئيسية</div>
-    <div class="install-sub" data-t="installSub">وصول أسرع، وتشتغل حتى لو النت واقع</div>
+    <div class="install-sub" id="installSub" data-t="installSub">وصول أسرع، وتشتغل حتى لو النت واقع</div>
   </div>
   <button class="install-btn" id="installBtn" data-t="installBtnText">تثبيت</button>
   <button class="install-close" id="installCloseBtn">✕</button>
@@ -937,7 +988,7 @@ const T = {
     historyTitle:'السجل التاريخي', historySub:'آخر 14 يوم', historyEmpty:'لسه مفيش أيام مسجلة',
     historyItemsCount:(n)=>`${n} صنف`, todayLabel:'النهاردة',
     installTitle:'ثبت المنصة على شاشتك الرئيسية', installSub:'وصول أسرع، وتشتغل حتى لو النت واقع',
-    installBtnText:'تثبيت', installIosHint:'من قائمة المشاركة اختار "إضافة إلى الشاشة الرئيسية"',
+    installBtnText:'تثبيت', installIosHint:'من متصفح سفاري: دوس على أيقونة المشاركة ⬆️ تحت الشاشة، وبعدين اختار "إضافة إلى الشاشة الرئيسية"',
     credit:'تم تصميم بواسطة <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener">NexCode</a>',
     mealBreakfast:'فطار', mealLunch:'غدا', mealDinner:'عشا', mealSnack:'سناك',
     streakLabel:(n)=> n>0 ? `🔥 ${n} يوم متتالي` : '',
@@ -954,6 +1005,7 @@ const T = {
     measureWaist:'الخصر', measureChest:'الصدر', measureArm:'الذراع', measureHip:'الحوض', measureEmpty:'لسه مفيش قياسات مسجلة',
     workoutTitle:'سجل التمارين', workoutName:'اسم التمرين', workoutSets:'مجموعات', workoutReps:'تكرارات',
     workoutAdd:'إضافة تمرين', workoutAddPhoto:'+ 📷 ضيف صورة (اختياري)', workoutEmpty:'لسه مفيش تمارين مسجلة النهاردة',
+    restTimerTitle:'مؤقت الراحة', restTimerStart:'ابدأ', restTimerPause:'إيقاف', restTimerReset:'إعادة', restTimerDone:'خلصت الراحة، يلا تاني 💪',
     workoutSetsRepsLabel:(s,r)=> `${s} × ${r}`,
     dayModeTitle:'إدارة اليوم', dayModeAuto:'تلقائي (12:00)', dayModeManual:'يدوي',
     dayModeAutoHint:'اليوم بيتغير لوحده الساعة 12:00 بالليل',
@@ -972,6 +1024,10 @@ const T = {
     inviteCopied:'اتنسخ الرابط ✅',
     nudgeOver:'سعراتك زادت عن هدفك بوضوح النهاردة — مفيش مشكلة، بكرة يوم جديد 🙂',
     nudgeUnder:'لسه باقيلك سعرات كتير من هدفك — متنساش تاكل كفاية 🍽️',
+    scoreLabel:'تقييم اليوم',
+    tipLowProtein:'بروتينك لسه قليل النهاردة — جرب فراخ أو بيض أو زبادي يوناني', tipLowWater:'اشرب شوية مياه، لسه ما شربتش كفاية 💧',
+    tipNoWorkout:'لسه ما سجلتش تمرين النهاردة', tipGreatDay:'يومك ماشي كويس جدًا، كمّل كده 🔥', tipDefault:'قوللي أكلت إيه النهاردة وأنا أحسبهولك',
+    aiCmdAnalyze:'حلل يومي', aiCmdRecipe:'اقترح وصفة', aiCmdBreakfast:'فطار بروتين', pdfTotalCal:'إجمالي السعرات',
     repeatYesterdayBtn:'🔁 كرر أكل امبارح', repeatYesterdayEmpty:'مفيش يوم فات مسجل فيه وجبات',
     repeatYesterdayConfirm:(d,n)=> `هنكرر ${n} صنف من يوم ${d}. متأكد؟`,
     badgesTitle:'الإنجازات', badgeStreak7:'أسبوع كامل 🔥', badgeStreak30:'شهر كامل 🏆', badgeWeightLoss:'إنجاز في الوزن ⚖️',
@@ -1063,7 +1119,7 @@ const T = {
     historyTitle:'History', historySub:'Last 14 days', historyEmpty:'No days logged yet',
     historyItemsCount:(n)=>`${n} items`, todayLabel:'Today',
     installTitle:'Install the app on your home screen', installSub:'Faster access, works even offline',
-    installBtnText:'Install', installIosHint:'From the share menu, choose "Add to Home Screen"',
+    installBtnText:'Install', installIosHint:'In Safari: tap the Share icon ⬆️ at the bottom, then choose "Add to Home Screen"',
     credit:'Designed by <a href="https://mute-mouse-67d8.yousseframadan2211.workers.dev/" target="_blank" rel="noopener">NexCode</a>',
     mealBreakfast:'Breakfast', mealLunch:'Lunch', mealDinner:'Dinner', mealSnack:'Snack',
     streakLabel:(n)=> n>0 ? `🔥 ${n} day streak` : '',
@@ -1080,6 +1136,7 @@ const T = {
     measureWaist:'Waist', measureChest:'Chest', measureArm:'Arm', measureHip:'Hip', measureEmpty:'No measurements logged yet',
     workoutTitle:'Workout log', workoutName:'Exercise name', workoutSets:'Sets', workoutReps:'Reps',
     workoutAdd:'Add exercise', workoutAddPhoto:'+ 📷 Add photo (optional)', workoutEmpty:'No exercises logged today',
+    restTimerTitle:'Rest timer', restTimerStart:'Start', restTimerPause:'Pause', restTimerReset:'Reset', restTimerDone:"Rest's over, let's go 💪",
     workoutSetsRepsLabel:(s,r)=> `${s} × ${r}`,
     dayModeTitle:'Day management', dayModeAuto:'Automatic (12:00)', dayModeManual:'Manual',
     dayModeAutoHint:'The day switches over automatically at 12:00 AM',
@@ -1098,6 +1155,10 @@ const T = {
     inviteCopied:'Link copied ✅',
     nudgeOver:"You're clearly over your target today — no worries, tomorrow's a new day 🙂",
     nudgeUnder:"You still have a lot of calories left toward your target — don't forget to eat enough 🍽️",
+    scoreLabel:"Today's score",
+    tipLowProtein:"Your protein is still low today — try chicken, eggs, or Greek yogurt", tipLowWater:"Drink some water, you haven't had enough yet 💧",
+    tipNoWorkout:"You haven't logged a workout today", tipGreatDay:"Your day is going great, keep it up 🔥", tipDefault:"Tell me what you ate today and I'll calculate it",
+    aiCmdAnalyze:'Analyze my day', aiCmdRecipe:'Suggest a recipe', aiCmdBreakfast:'Protein breakfast', pdfTotalCal:'Total calories',
     repeatYesterdayBtn:'🔁 Repeat last day', repeatYesterdayEmpty:'No past day with logged meals',
     repeatYesterdayConfirm:(d,n)=> `We'll repeat ${n} items from ${d}. Continue?`,
     badgesTitle:'Achievements', badgeStreak7:'Full week 🔥', badgeStreak30:'Full month 🏆', badgeWeightLoss:'Weight milestone ⚖️',
@@ -1778,6 +1839,7 @@ function renderGauge(){
   targetEl.textContent = T[lang].targetPrefix + target.calTarget;
   renderMacros();
   renderGaugeNudge(target, totals);
+  renderTodayScore();
 }
 function renderGaugeNudge(target, totals){
   const el = document.getElementById('gaugeNudge');
@@ -1790,6 +1852,44 @@ function renderGaugeNudge(target, totals){
   } else {
     el.textContent = '';
   }
+}
+
+/* ---------------- Today Score + smart tip ---------------- */
+function computeTodayScore(target, totals){
+  const override = loadMacroOverride();
+  const pTarget = override ? override.p : target.pTarget;
+  const calRatio = target.calTarget>0 ? 1 - Math.min(1, Math.abs(totals.cal-target.calTarget)/target.calTarget) : 0;
+  const proteinRatio = pTarget>0 ? Math.min(1, totals.p/pTarget) : 0;
+  const water = getTodayWater();
+  const waterRatio = Math.min(1, water/8);
+  const workoutMap = loadWorkoutMap();
+  const workoutToday = (workoutMap[activeDayKey()] && workoutMap[activeDayKey()].length>0) ? 1 : 0;
+  const score = Math.round((calRatio*0.35 + proteinRatio*0.30 + waterRatio*0.20 + workoutToday*0.15) * 100);
+  return Math.max(0, Math.min(100, score));
+}
+function computeSmartTip(target, totals){
+  const override = loadMacroOverride();
+  const pTarget = override ? override.p : target.pTarget;
+  const water = getTodayWater();
+  const hour = new Date().getHours();
+  const workoutMap = loadWorkoutMap();
+  const workoutToday = workoutMap[activeDayKey()] && workoutMap[activeDayKey()].length>0;
+  const score = computeTodayScore(target, totals);
+  if(pTarget>0 && totals.p < pTarget*0.5 && hour>=10) return T[lang].tipLowProtein;
+  if(water < 4 && hour>=14) return T[lang].tipLowWater;
+  if(!workoutToday && hour>=17) return T[lang].tipNoWorkout;
+  if(score>=80) return T[lang].tipGreatDay;
+  return T[lang].tipDefault;
+}
+function renderTodayScore(){
+  const target = loadTarget();
+  const pill = document.getElementById('scorePill');
+  const tip = document.getElementById('smartTip');
+  if(!target){ pill.innerHTML=''; tip.textContent=''; return; }
+  const totals = computeTotals();
+  const score = computeTodayScore(target, totals);
+  pill.innerHTML = `<div class="score-pill-ring" style="--score:${score}"><div class="score-pill-ring-inner num">${score}</div></div><span>${T[lang].scoreLabel}</span>`;
+  tip.textContent = computeSmartTip(target, totals);
 }
 
 function loadMacroOverride(){ try{ return JSON.parse(localStorage.getItem('gemaweya_macro_override')||'null'); }catch(e){ return null; } }
@@ -2233,6 +2333,10 @@ function isAndroidChrome(){
 function showInstallBanner(){
   if(isStandalone()) return;
   if(localStorage.getItem('gemaweya_install_dismissed')==='1') return;
+  if(isIOS()){
+    document.getElementById('installSub').textContent = T[lang].installIosHint;
+    installBtn.textContent = lang==='ar' ? 'وريني إزاي' : 'Show me how';
+  }
   installBanner.classList.add('show');
 }
 window.addEventListener('beforeinstallprompt', (e)=>{
@@ -2275,8 +2379,19 @@ installCloseBtn.addEventListener('click', ()=>{
 });
 // Show the banner right away — don't wait only for beforeinstallprompt,
 // since that event doesn't fire on iOS/Safari or inside in-app browsers.
+// Wait until any auto-opened Settings panel (first-visit onboarding) is closed
+// first, so the two don't collide and the banner doesn't get buried.
+function tryShowInstallBanner(delay){
+  setTimeout(()=>{
+    if(document.getElementById('settingsOverlay').classList.contains('show')){
+      tryShowInstallBanner(1000);
+      return;
+    }
+    showInstallBanner();
+  }, delay);
+}
 if(!isStandalone()){
-  setTimeout(showInstallBanner, 1000);
+  tryShowInstallBanner(1200);
 }
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
@@ -2557,6 +2672,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
   });
   const n = last30.length;
   const avgCal = Math.round(totalCal/n);
+  const totalPr = Math.round(totalP), totalCr = Math.round(totalC), totalFr = Math.round(totalF);
   const avgP = Math.round(totalP/n), avgC = Math.round(totalC/n), avgF = Math.round(totalF/n);
   const weights = loadWeights();
   const weightsInRange = weights.filter(w=> w.date>=last30[0] && w.date<=last30[n-1]);
@@ -2610,7 +2726,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
   const cardW = (W - 70*2 - 24) / 2, cardH = 160;
   const cardY0 = 210;
   const statCards = [
-    {label:T[lang].pdfAvgCal, value:`${avgCal}`, unit:'kcal'},
+    {label:T[lang].pdfTotalCal, value:`${totalCal}`, unit:`kcal · ${T[lang].pdfAvgPerDay(avgCal)}`},
     {label:T[lang].pdfWeightChange, value:weightChangeStr, unit:''},
     {label:T[lang].pdfAdherence, value:`${n}/30`, unit:`(${adherencePct}%)`},
     {label:T[lang].pdfStreak, value:`${streak}`, unit:lang==='ar'?'يوم':'days'},
@@ -2636,20 +2752,20 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
     }
   });
 
-  // Macros row
+  // Macros row (month totals, with daily average as secondary context)
   let macroY = cardY0 + 2*(cardH+24) + 30;
   ctx.textAlign = isAr ? 'right' : 'left';
   ctx.fillStyle = inkDark;
   ctx.font = '700 30px Tajawal, sans-serif';
-  ctx.fillText(lang==='ar' ? 'متوسط الماكروز اليومي' : 'Average daily macros', isAr ? rightX : leftX, macroY);
+  ctx.fillText(T[lang].pdfMacrosTotalTitle, isAr ? rightX : leftX, macroY);
   macroY += 20;
   ctx.strokeStyle = lineCol; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(leftX, macroY); ctx.lineTo(rightX, macroY); ctx.stroke();
   macroY += 60;
   const macros = [
-    {label:lang==='ar'?'بروتين':'Protein', val:`${avgP}${lang==='ar'?'غ':'g'}`, color:'#5b7d8c'},
-    {label:lang==='ar'?'كارب':'Carbs', val:`${avgC}${lang==='ar'?'غ':'g'}`, color:'#c46a3a'},
-    {label:lang==='ar'?'دهون':'Fat', val:`${avgF}${lang==='ar'?'غ':'g'}`, color:'#9585b0'},
+    {label:lang==='ar'?'بروتين':'Protein', val:`${totalPr}${lang==='ar'?'غ':'g'}`, sub:T[lang].pdfAvgPerDay(avgP), color:'#5b7d8c'},
+    {label:lang==='ar'?'كارب':'Carbs', val:`${totalCr}${lang==='ar'?'غ':'g'}`, sub:T[lang].pdfAvgPerDay(avgC), color:'#c46a3a'},
+    {label:lang==='ar'?'دهون':'Fat', val:`${totalFr}${lang==='ar'?'غ':'g'}`, sub:T[lang].pdfAvgPerDay(avgF), color:'#9585b0'},
   ];
   const macroColW = (W-140)/3;
   macros.forEach((m,i)=>{
@@ -2663,10 +2779,12 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
     ctx.fillStyle = inkMuted;
     ctx.font = '400 22px Tajawal, sans-serif';
     ctx.fillText(m.label, mx, macroY+92);
+    ctx.font = '400 17px Tajawal, sans-serif';
+    ctx.fillText(m.sub, mx, macroY+118);
   });
 
   // Workouts line
-  let wY = macroY + 150;
+  let wY = macroY + 175;
   ctx.textAlign = isAr ? 'right' : 'left';
   ctx.fillStyle = inkDark;
   ctx.font = '400 26px Tajawal, sans-serif';
@@ -2677,7 +2795,11 @@ document.getElementById('exportPdfBtn').addEventListener('click', async ()=>{
   ctx.textAlign = 'center';
   ctx.fillStyle = inkMuted;
   ctx.font = '400 20px Tajawal, sans-serif';
-  ctx.fillText(`Gemaweya · NexCode · ${todayKey()}`, centerX, H-50);
+  ctx.fillText(`Gemaweya · NexCode · ${todayKey()}`, centerX, H-70);
+  ctx.fillStyle = accent;
+  ctx.font = '600 22px Tajawal, sans-serif';
+  const siteUrl = 'gemawy.vercel.app';
+  ctx.fillText(siteUrl, centerX, H-40);
 
   const imgData = canvas.toDataURL('image/png', 1.0);
   const { jsPDF } = window.jspdf;
@@ -2733,6 +2855,7 @@ function renderWater(){
   document.getElementById('waterCount').textContent = n;
   document.getElementById('waterBar').style.width = Math.min(100, (n/WATER_GOAL)*100) + '%';
   document.getElementById('waterSub').textContent = n >= WATER_GOAL ? T[lang].waterGoalReached : `${n}/${WATER_GOAL}`;
+  renderTodayScore();
 }
 document.getElementById('waterPlus').addEventListener('click', ()=> setTodayWater(getTodayWater()+1));
 document.getElementById('waterMinus').addEventListener('click', ()=> setTodayWater(getTodayWater()-1));
@@ -2797,6 +2920,55 @@ document.getElementById('calcBodyFatBtn').addEventListener('click', ()=>{
 });
 
 /* ---------------- Workout log ---------------- */
+/* ---------------- Rest timer ---------------- */
+let restTimerSeconds = 60;
+let restTimerRemaining = 60;
+let restTimerInterval = null;
+function formatTimer(s){
+  const m = Math.floor(s/60), sec = s%60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function updateTimerDisplay(){
+  document.getElementById('restTimerDisplay').textContent = formatTimer(restTimerRemaining);
+}
+document.querySelectorAll('.rest-timer-presets .chip').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.rest-timer-presets .chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    restTimerSeconds = parseInt(btn.getAttribute('data-secs'));
+    restTimerRemaining = restTimerSeconds;
+    clearInterval(restTimerInterval); restTimerInterval = null;
+    updateTimerDisplay();
+    document.getElementById('restTimerStart').textContent = T[lang].restTimerStart;
+  });
+});
+document.getElementById('restTimerStart').addEventListener('click', ()=>{
+  const btn = document.getElementById('restTimerStart');
+  if(restTimerInterval){
+    clearInterval(restTimerInterval); restTimerInterval = null;
+    btn.textContent = T[lang].restTimerStart;
+    return;
+  }
+  btn.textContent = T[lang].restTimerPause;
+  restTimerInterval = setInterval(()=>{
+    restTimerRemaining--;
+    updateTimerDisplay();
+    if(restTimerRemaining<=0){
+      clearInterval(restTimerInterval); restTimerInterval = null;
+      btn.textContent = T[lang].restTimerStart;
+      try{ new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=').play(); }catch(e){}
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      sendNotif(T[lang].restTimerDone);
+    }
+  }, 1000);
+});
+document.getElementById('restTimerReset').addEventListener('click', ()=>{
+  clearInterval(restTimerInterval); restTimerInterval = null;
+  restTimerRemaining = restTimerSeconds;
+  updateTimerDisplay();
+  document.getElementById('restTimerStart').textContent = T[lang].restTimerStart;
+});
+
 function loadWorkoutMap(){ try{ return JSON.parse(localStorage.getItem('gemaweya_workouts')||'{}'); }catch(e){ return {}; } }
 function saveWorkoutMap(map){ localStorage.setItem('gemaweya_workouts', JSON.stringify(map)); }
 let pendingWorkoutPhoto = null;
@@ -2843,6 +3015,7 @@ function renderWorkouts(){
   const items = map[activeDayKey()] || [];
   const empty = document.getElementById('workoutEmpty');
   const wrap = document.getElementById('workoutList');
+  renderTodayScore();
   if(items.length===0){ empty.style.display='block'; wrap.innerHTML=''; return; }
   empty.style.display='none';
   wrap.innerHTML = items.map((it,idx)=>`
@@ -3644,14 +3817,38 @@ function aiInferMealType(){
 }
 
 function aiTryRecipe(text){
-  const kws = lang==='ar' ? ['وصفة','وصفات','اقترح','أكلة اعملها'] : ['recipe','suggest','cook'];
+  const kws = lang==='ar' ? ['وصفة','وصفات','اقترح','أكلة اعملها','فطار بروتين'] : ['recipe','suggest','cook'];
   const lower = text.toLowerCase();
-  const hit = kws.some(k=> text.includes(k) || lower.includes(k));
+  const hit = kws.some(k=> text.includes(k) || lower.includes(k)) || lower.includes('breakfast');
   if(!hit) return false;
-  const r = RECIPES[Math.floor(Math.random()*RECIPES.length)];
+  const wantsBreakfast = text.includes('فطار') || lower.includes('breakfast');
+  let pool = RECIPES;
+  if(wantsBreakfast){
+    pool = RECIPES.slice().sort((a,b)=> b.p-a.p).slice(0, 30);
+  }
+  const r = pool[Math.floor(Math.random()*pool.length)];
   const name = lang==='ar' ? r.ar : r.en;
   const ing = lang==='ar' ? r.ar_ing : r.en_ing;
   addAiMessage(`${T[lang].aiRecipeIntro}<br><b>${name}</b><br>${ing}<br><span class="num">${r.cal} ${T[lang].aiMealCardCal} · P${r.p} C${r.c} F${r.f}</span>`, 'bot');
+  return true;
+}
+function aiTryAnalyzeDay(text){
+  const kws = lang==='ar' ? ['حلل يومي','حلل اليوم','تحليل يومي'] : ['analyze my day', 'analyze today'];
+  const lower = text.toLowerCase();
+  const hit = kws.some(k=> text.includes(k) || lower.includes(k));
+  if(!hit) return false;
+  const target = loadTarget();
+  if(!target){ addAiMessage(T[lang].setGoalFirst, 'bot'); return true; }
+  const totals = computeTotals();
+  const score = computeTodayScore(target, totals);
+  const tip = computeSmartTip(target, totals);
+  const water = getTodayWater();
+  addAiMessage(
+    `${T[lang].scoreLabel}: <b>${score}/100</b><br>`+
+    `${T[lang].pdfTotalCal || (lang==='ar'?'السعرات':'Calories')}: ${totals.cal} / ${target.calTarget}<br>`+
+    `P${totals.p} C${totals.c} F${totals.f}<br>`+
+    `${lang==='ar'?'مياه':'Water'}: ${water}/${WATER_GOAL}<br><br>${tip}`,
+  'bot');
   return true;
 }
 
@@ -3821,6 +4018,7 @@ function aiHandleMessage(text){
     if(aiTryBye(text)) return;
     if(aiTryHowAreYou(text)) return;
     if(aiTryGreeting(text)) return;
+    if(aiTryAnalyzeDay(text)) return;
     if(aiTryRecipe(text)) return;
     if(aiTryFaq(text)) return;
     if(aiTryMeal(text)) return;
@@ -3839,6 +4037,19 @@ function aiSend(){
 document.getElementById('aiSendBtn').addEventListener('click', aiSend);
 document.getElementById('aiInput').addEventListener('keydown', (e)=>{
   if(e.key==='Enter') aiSend();
+});
+document.getElementById('aiQuickCmds').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const cmd = btn.getAttribute('data-cmd');
+  const texts = {
+    analyze: lang==='ar' ? 'حلل يومي' : 'analyze my day',
+    recipe: lang==='ar' ? 'اقترح وصفة' : 'suggest a recipe',
+    breakfast: lang==='ar' ? 'فطار بروتين' : 'protein breakfast',
+  };
+  const text = texts[cmd];
+  addAiMessage(text, 'user');
+  aiHandleMessage(text);
 });
 document.getElementById('aiShortcutBtn').addEventListener('click', ()=>{
   const note = document.getElementById('aiSetupNote');
@@ -3911,6 +4122,7 @@ function openSettings(){
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('show');
+  setTimeout(showInstallBanner, 1200);
 }
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('settingsCloseBtn').addEventListener('click', closeSettings);
@@ -3977,6 +4189,10 @@ document.getElementById('inviteBannerCloseBtn').addEventListener('click', ()=>{
 });
 function showInviteBannerOnce(){
   if(sessionStorage.getItem('gemaweya_invite_dismissed_session')==='1') return;
+  if(document.getElementById('settingsOverlay').classList.contains('show')){
+    setTimeout(showInviteBannerOnce, 1500);
+    return;
+  }
   document.getElementById('inviteBanner').classList.add('show');
 }
 
@@ -4114,6 +4330,18 @@ function showPinLock(mode, onSuccess){
 function hidePinLock(){
   document.getElementById('pinLockScreen').style.display = 'none';
 }
+/* Re-lock whenever the app is backgrounded and re-opened, not just on a fresh launch */
+document.addEventListener('visibilitychange', ()=>{
+  if(!getPin()) return;
+  if(document.visibilityState === 'hidden'){
+    sessionStorage.removeItem('gemaweya_pin_unlocked');
+  } else if(document.visibilityState === 'visible'){
+    if(sessionStorage.getItem('gemaweya_pin_unlocked') !== '1'){
+      closeSettings();
+      showPinLock('enter', ()=>{});
+    }
+  }
+});
 function updatePinDots(){
   const dots = document.querySelectorAll('#pinDots .pin-dot');
   dots.forEach((d,i)=> d.classList.toggle('filled', i < pinBuffer.length));
